@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="베트남어 SRS">
+<title>베트남어 SRS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:#0d0d1a;overscroll-behavior:none;-webkit-text-size-adjust:none;}
+body{font-family:'Noto Sans KR',sans-serif;color:#f0e6ff;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:#3d2c7a;border-radius:99px;}
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+#app{min-height:100dvh;display:flex;flex-direction:column;align-items:center;background:#0d0d1a;}
+.wrap{width:100%;max-width:480px;display:flex;flex-direction:column;min-height:100dvh;}
+.header{padding:14px 20px 10px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #3d2c7a;flex-shrink:0;}
+.header-title{font-family:'Boogaloo',cursive;font-size:19px;color:#f7c948;}
+.header-sub{font-size:11px;color:#a78bda;margin-top:1px;}
+.tabs{display:flex;border-bottom:1px solid #3d2c7a;flex-shrink:0;}
+.tab{flex:1;padding:10px 0;background:none;border:none;border-bottom:2px solid transparent;color:#6a4aaa;font-size:14px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
+.tab.active{border-bottom-color:#f7c948;color:#f7c948;font-weight:700;}
+.screen{flex:1;display:flex;flex-direction:column;animation:fadeUp .3s ease;}
+.screen.hidden{display:none;}
+
+/* HOME */
+.home-body{flex:1;display:flex;flex-direction:column;padding:20px 18px;gap:14px;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.stat-card{background:#1e1440;border:1.5px solid #3d2c7a;border-radius:16px;padding:14px 8px;text-align:center;}
+.stat-emoji{font-size:22px;}
+.stat-value{font-size:22px;font-weight:700;margin-top:4px;}
+.stat-label{font-size:11px;color:#a78bda;margin-top:2px;}
+.progress-card{background:#1e1440;border:1.5px solid #3d2c7a;border-radius:16px;padding:14px 16px;}
+.progress-header{display:flex;justify-content:space-between;font-size:12px;color:#a78bda;margin-bottom:8px;}
+.progress-track{height:8px;background:#0d0d1a;border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#a259ff,#f7c948);transition:width .4s;}
+.progress-sub{font-size:11px;color:#6a4aaa;margin-top:6px;}
+.btn-primary{width:100%;padding:17px;border-radius:18px;border:none;background:linear-gradient(135deg,#a259ff,#f7c948);color:#0d0d1a;font-size:17px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
+.btn-primary:disabled{background:#1e1440;color:#a78bda;}
+.btn-secondary{width:100%;padding:13px;border-radius:14px;border:1.5px solid #3d2c7a;background:transparent;color:#a78bda;font-size:14px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
+.btn-danger{background:none;border:none;color:#3d2c7a;font-size:12px;cursor:pointer;padding:8px;font-family:'Noto Sans KR',sans-serif;}
+.done-banner{background:#0a1a0e;border:1.5px solid #2a6e44;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;animation:popIn .3s ease;}
+
+/* BACKUP */
+.backup-area{background:#1e1440;border:1.5px solid #3d2c7a;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+.backup-title{font-size:13px;color:#a78bda;font-weight:700;}
+.backup-btns{display:flex;gap:8px;}
+.backup-btn{flex:1;padding:10px;border-radius:12px;border:1.5px solid #3d2c7a;background:#0d0d1a;color:#f0e6ff;font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
+textarea.backup-input{width:100%;height:80px;background:#0a081a;border:1.5px solid #3d2c7a;border-radius:10px;color:#f0e6ff;font-size:11px;padding:8px;font-family:monospace;resize:none;outline:none;}
+
+/* QUIZ */
+.quiz-progress{padding:8px 20px 0;flex-shrink:0;}
+.quiz-prog-track{height:4px;background:#1e1440;border-radius:99px;overflow:hidden;}
+.quiz-prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#a259ff,#f7c948);transition:width .4s;}
+.quiz-prog-text{display:flex;justify-content:space-between;font-size:11px;color:#6a4aaa;margin-top:3px;}
+.quiz-body{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 20px 8px;gap:14px;}
+.badge-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;}
+.badge{font-size:12px;background:#1e1440;border:1px solid #3d2c7a;border-radius:20px;padding:3px 12px;}
+.badge-wrong{font-size:12px;color:#f87171;background:#180606;border:1px solid #6e2a2a;border-radius:20px;padding:3px 10px;}
+.listen-btn{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#1e1440,#16102e);border:3px solid #3d2c7a;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;outline:none;gap:4px;transition:all .2s;}
+.listen-btn.pulse{background:radial-gradient(circle,#2a1060,#1e1440);border-color:#a259ff;box-shadow:0 0 28px #a259ff55;transform:scale(1.05);}
+.listen-icon{font-size:42px;}
+.listen-label{font-size:11px;color:#a78bda;}
+.slow-btn{padding:6px 14px;border-radius:20px;border:1px solid #3d2c7a;background:transparent;color:#a78bda;font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
+.feedback{width:100%;padding:14px 16px;border-radius:18px;text-align:center;animation:popIn .22s ease;}
+.feedback.correct{border:1.5px solid #2a6e44;background:#06180e;}
+.feedback.wrong{border:1.5px solid #6e2a2a;background:#180606;}
+.feedback-icon{font-size:26px;}
+.feedback-label{font-size:15px;font-weight:700;margin-top:3px;}
+.feedback.correct .feedback-label{color:#4ade80;}
+.feedback.wrong .feedback-label{color:#f87171;}
+.feedback-word{font-size:24px;font-weight:700;color:#f0e6ff;margin-top:6px;font-family:monospace;letter-spacing:1px;}
+.feedback-ko{font-size:13px;color:#c4a8e8;margin-top:3px;}
+.feedback-next{font-size:11px;color:#4ade8080;margin-top:6px;}
+.feedback-mine{font-size:12px;color:#f8717155;margin-top:6px;}
+.input-area{flex-shrink:0;padding:10px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom));border-top:1px solid #3d2c7a;background:#0d0d1a;display:flex;flex-direction:column;gap:8px;}
+.answer-input{width:100%;padding:13px 16px;border-radius:14px;border:2px solid #3d2c7a;background:#0a081a;color:#f0e6ff;font-size:20px;text-align:center;outline:none;font-family:monospace;letter-spacing:1px;}
+.answer-input:disabled{opacity:.7;}
+.answer-input.correct{border-color:#2a6e44;color:#4ade80;}
+.answer-input.wrong-state{border-color:#6e2a2a;color:#f87171;}
+.answer-input.shaking{animation:shake .35s ease;}
+.confirm-btn{width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#a259ff,#f7c948);color:#0d0d1a;font-size:17px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
+.confirm-btn.next{background:#1e1440;color:#a78bda;}
+.streak-badge{margin-left:auto;background:#1e1440;border:1.5px solid #3d2c7a;border-radius:20px;padding:4px 12px;font-size:14px;font-weight:700;color:#f7c948;}
+
+/* WRONG NOTE */
+.note-body{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px;}
+.note-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#6a4aaa;}
+.note-item{background:#1e1440;border:1.5px solid #3d2c7a;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+.note-count{background:#180606;border:1px solid #6e2a2a;border-radius:10px;padding:4px 10px;font-size:13px;color:#f87171;font-weight:700;flex-shrink:0;}
+.note-vi{font-size:17px;font-family:monospace;color:#f0e6ff;letter-spacing:.3px;}
+.note-ko{font-size:12px;color:#a78bda;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* STATS */
+.stats-body{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:16px;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.summary-card{background:#1e1440;border:1.5px solid #3d2c7a;border-radius:14px;padding:14px;text-align:center;}
+.chart-card{background:#1e1440;border:1.5px solid #3d2c7a;border-radius:16px;padding:16px 12px;}
+.chart-title{font-size:13px;color:#a78bda;margin-bottom:14px;font-weight:700;}
+.chart-bars{display:flex;align-items:flex-end;gap:4px;height:100px;}
+.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.chart-bar-inner{width:100%;display:flex;flex-direction:column;justify-content:flex-end;height:90px;gap:1px;}
+.chart-label{font-size:8px;color:#6a4aaa;transform:rotate(-30deg);margin-top:2px;white-space:nowrap;}
+.chart-label.today{color:#f7c948;font-weight:700;}
+.chart-legend{display:flex;gap:12px;margin-top:12px;justify-content:center;}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#a78bda;}
+.legend-dot{width:10px;height:10px;border-radius:2px;}
+.level-card{background:#1e1440;border:1.5px solid #3d2c7a;border-radius:16px;padding:16px;}
+.level-row{margin-bottom:10px;}
+.level-header{display:flex;justify-content:space-between;font-size:12px;color:#a78bda;margin-bottom:4px;}
+.level-track{height:6px;background:#0d0d1a;border-radius:99px;overflow:hidden;}
+.level-fill{height:100%;border-radius:99px;transition:width .6s;}
+</style>
+</head>
+<body>
+<div id="app"><div class="wrap" id="wrap"></div></div>
+
+<script>
+// ── 단어 데이터 ───────────────────────────────────────────────
+const RAW = `không có gì	천만에요 (별말씀을요)
+đợi	기다리다
+thật không	정말?, 진짜?
+vừa mới	방금, 막
+nhanh lên	서둘러, 빨리
+đừng	~하지 마라 (금지)
+hãy	~하자, ~해라 (권유/명령)
+chúc mừng	축하하다
+chia buồn	조의를 표하다, 위로하다
+tai nạn	사고
+địa hình	지형
+lượng mưa	강우
+thung lũng	계곡, 골짜기
+đồng bằng	평야
+đảo	섬
+la bàn	나침반
+nam	남쪽, 남성
+bắc	북쪽
+hướng	방향
+tây	서쪽
+châu	대륙 (주)
+á	아시아
+đại dương	대양, 바다
+nam cực	남극
+châu phi	아프리카
+âu	유럽
+phía trước	앞쪽, 앞에
+trước khi	~전에
+sau khi	~후에
+trong	안(내부), ~동안
+phía sau	뒤쪽, 뒤에
+từ	단어, ~부터
+cùng	함께, 같은
+ngoài	밖, ~이외에
+về	~에 대해, 돌아오다
+ít	적은, 약간
+nhất	제일, 가장 (1등)
+hơn	더, ~보다
+so sánh	비교하다
+họ hàng	친척
+chú	삼촌, 아저씨
+hôn nhân	결혼
+ông	할아버지, 당신(존칭)
+em	동생, 너(연하)
+bà	할머니, 당신(존칭)
+gái	여자, 딸
+trai	남자, 아들
+chị	언니, 누나
+thế kỷ	세기
+ngày sinh	생일, 생년월일
+thế hệ	세대
+thiên niên kỷ	천년 (밀레니엄)
+thập niên	10년 (년대)
+thu	가을
+hè	여름
+mùa	계절
+đông	겨울, 동쪽
+xuân	봄
+tháng một	1월
+tháng tư	4월
+phút	분
+tháng	월, 달
+giây	초
+tuổi	나이, 살
+nay	이번, 지금
+chủ nhật	일요일
+giờ	시간, 시
+hôm nay	오늘
+tuần	주 (일주일)
+thứ tư	수요일
+thời gian	시간
+ngày	날, 일
+Lịch	달력
+tối nay	오늘 밤
+mỗi	매, 각각
+ngày mai	내일
+chiều	오후
+thì	그러면, ~이다
+khi nào	언제
+hoặc	또는, ~거나
+bởi vì	왜냐하면, ~때문에
+tổng cộng	합계, 총
+số	숫자, 수
+nửa	반, 절반
+đủ	충분한
+thử thách	도전
+ôm	안다, 포옹하다
+bật	켜다
+tắt	끄다
+dừng	멈추다
+sản xuất	생산하다
+nhìn	보다
+bảo vệ	보호하다
+thành công	성공하다
+thất bại	실패하다
+đồng ý	동의하다
+thay đổi	변화, 바꾸다
+tồn tại	존재하다
+cho phép	허락하다
+cuối cùng	마침내, 마지막의
+đầu tiên	첫 번째의, 우선
+tìm hiểu	알아보다, 배우다
+đưa	주다, 건네다, 데려가다
+hy vọng	희망하다, 바라다
+xuất bản	출판하다
+trở về	돌아오다
+giao tiếp	의사소통하다
+hôn	키스하다
+thảo luận	토론하다, 논의하다
+tỷ	10억 (빌리언)
+triệu	백만
+lẻ	(숫자 중간의) 공/영, 홀수의
+mốt	1 (21 이상 숫자에서)
+lăm	5 (15 이상 숫자에서)
+nhiều	많은
+tư	4 (24 이상 숫자에서), 사적인
+mười	10 (십)
+thân thiện	친절한
+lịch sự	예의 바른
+tệ	나쁜, 형편없는
+truyền thống	전통
+sai	틀린
+buồn	슬픈, 미안한
+bướng bỉnh	고집 센
+nghiêm túc	진지한
+trước	전에, 앞에
+nhưng	그러나, 하지만
+mà còn	~뿐만 아니라
+đều	모두, 다
+cả	모든, 전체의
+tuy	비록 ~이지만
+nếu	만약
+trong khi	~하는 동안, 반면에
+phát minh	발명하다, 발명
+phân biệt	구별하다
+hiểu	이해하다
+gửi	보내다
+tặng	선물하다, 주다
+tin	믿다
+cố gắng	노력하다, 시도하다
+thắng	이기다
+thứ	것, (순서) ~번째
+lần	번, 회
+vào	들어가다, ~에
+đang	~하는 중이다 (현재 진행)
+lúc này	지금, 이때
+bây giờ	지금
+hiện tại	현재
+nên	그러므로, ~해야 한다
+chín	9 (구)
+tám	8 (팔)
+bảy	7 (칠)
+sáu	6 (육)
+trưởng thành	성숙한, 어른스러운
+tiện lợi	편리한
+ích kỷ	이기적인
+nặng	무거운
+nguy hiểm	위험한
+xa xỉ	사치스러운, 호화로운
+mới	새로운
+cũ	낡은, 오래된
+cần thiết	필요한
+kiên nhẫn	인내심 있는
+đắt	비싼
+trung thực	정직한
+trắng	흰색, 하얀
+màu	색깔
+hỏi	묻다, 질문하다
+đáp án	답안, 정답
+câu	문장
+trả lời	대답하다
+như	~처럼, ~와 같이
+thế nào	어떻게, 어떠한
+điện thoại	전화기
+tivi	텔레비전
+máy tính	컴퓨터
+gương	거울
+đồng hồ	시계
+cửa sổ	창문
+muỗng	숟가락
+chai	병
+nhạt	(색/맛이) 연한, 싱거운
+tím	보라색
+nâu	갈색
+xám	회색
+xanh lá cây	초록색
+xanh da trời	파란색 (하늘색)
+đỏ	빨간색
+đen	검은색
+giường	침대
+đứng	서다
+ngồi	앉다
+để	놓다, 두다, ~하게 하다
+nhảy	뛰다, 춤추다
+bắt đầu	시작하다
+nghĩ	생각하다
+múa	춤추다
+lớn	큰
+dễ	쉬운
+đặc biệt	특별한
+ngon	맛있는
+khó	어려운
+đậm	(색이) 진한
+hồng	분홍색
+vàng	노란색
+làm sao	어떻게
+bao	가방, 자루
+ví	지갑
+pin	배터리
+thuốc lá	담배
+túi	가방, 주머니
+đèn	등, 램프
+hát	노래하다
+ủng hộ	지지하다, 후원하다
+xem	보다
+chạy	달리다
+việc	일, 업무
+làm	하다, 만들다
+lấy	가져가다, 얻다
+tìm	찾다
+tích cực	긍정적인
+lạc quan	낙관적인
+dài	긴
+ngắn	짧은
+hiện đại	현대적인
+hoàn hảo	완벽한
+độc lập	독립적인
+nghèo	가난한
+quan trọng	중요한
+hài hước	유머러스한, 재미있는
+chậm	느린
+hạnh phúc	행복한
+đơn giản	단순한, 간단한
+nhanh	빠른
+phức tạp	복잡한
+nhỏ	작은
+váy	치마
+cởi	벗다
+khoác	외투, 코트
+mặc	입다
+áo	옷, 셔츠
+đầm	원피스, 드레스
+khỉ	원숭이
+voi	코끼리
+thấy	보다, 찾다
+gì	무엇
+khi	언제, ~할 때
+sao	왜, 어떻게, 별
+tại	~에, ~에서
+vì	왜냐하면, ~때문에
+nào	어느, 어떤
+ai	누구
+tất	양말
+ủng	부츠, 장화
+đôi	켤레, 쌍, 커플
+giày	신발
+đội	(모자를) 쓰다, 팀
+quần	바지
+mang	(신발을) 신다, 가져가다
+mũ	모자
+chuồn chuồn	잠자리
+thỏ	토끼
+gấu	곰
+rắn	뱀
+bò	소
+vịt	오리
+động vật	동물
+sở thú	동물원
+chuột	쥐
+ngựa	말
+trâu	물소
+heo	돼지
+rùa	거북이
+rồng	용
+cá sấu	악어
+chim	새
+tối	저녁, 어두운
+canh	국
+thức ăn	음식
+dầu ăn	식용유
+rượu	술
+thắt lưng	허리띠, 벨트
+áo lạnh	스웨터, 방한복
+khăn quàng	목도리, 스카프
+nấm	버섯
+ớt	고추
+rau	채소, 야채
+bữa	식사, 끼니
+trưa	점심, 정오
+chanh	레몬, 라임
+chuối	바나나
+trái cây	과일
+lắng nghe	경청하다, 귀 기울이다
+dùng	사용하다, 쓰다
+cười	웃다
+khóc	울다
+ngủ	자다
+thử	시도하다, 입어보다
+viết	쓰다
+nghe	듣다
+bơi	수영하다
+giúp	돕다
+mở	열다, 켜다
+đỡ	돕다, 지지하다
+chơi	놀다
+luyện	연습하다
+bộ	세트, 벌 (옷 세는 단위)
+bán	팔다
+trứng	계란, 알
+chay	채식
+mì ý	파스타
+cà chua	토마토
+khoai tây chiên	감자튀김
+thịt	고기
+mì ăn liền	라면 (인스턴트 면)
+muối	소금
+cơm	밥
+tạp chí	잡지
+đĩa	접시
+họ	그들, 성(Family name)
+thực đơn	메뉴
+bánh	빵, 케이크
+báo	신문
+đọc	읽다
+trái	과일(단위), 왼쪽
+quả	과일(단위), 과일
+tờ	장 (종이 세는 단위)
+cuốn	권 (책/말이 세는 단위)
+hẹn gặp lại	또 만나요
+lặp lại	반복하다
+cẩn thận	조심하다
+cứ tự nhiên	편히 계세요, 마음껏 하세요
+tạm biệt	안녕히 가세요 (작별)
+không phải là	~이 아니다
+cam	오렌지, 주황색
+nó	그것, 그
+việt nam	베트남
+hay	또는, 재미있는, 잘
+ly	컵, 잔
+gọi	부르다, 주문하다
+thư	편지
+tờ giấy	종이
+giấu	숨기다
+phòng	방
+ghế	의자
+ghi âm	녹음하다
+phường	동 (행정 구역)
+phà	페리, 연락선
+cắn	물다
+gà	닭
+ong	벌
+cá	물고기
+cái	개 (단위), 것
+các	들 (복수형)
+tập	연습하다
+ngã	넘어지다
+vĩnh viễn	영원히
+vẽ	그리다
+mẫu giáo	유치원
+dũng cảm	용감한
+giàu	부유한
+sợi dây	줄, 끈
+mây	구름
+chim sẻ	참새
+chia sẻ	공유하다, 나누다
+sấm sét	천둥 번개
+đom đóm	반딧불이
+xe đạp	자전거
+cây tre	대나무
+đu đủ	파파야
+làm ơn	제발, 부탁합니다
+bình thường	평범한, 보통의
+buổi	(시간의) 때, 회
+vẫn	아직도, 여전히
+ổn	괜찮은
+chào mừng	환영하다
+tên	이름
+mình	나, 우리, 자신
+kia	저기, 저것
+cô gái	소녀, 젊은 여자
+cậu bé	소년, 남자 아이
+bé gái	여자 아이
+táo	사과
+uống	마시다
+nước ép	주스
+dì	이모
+dê	염소
+ô	우산
+nhà ga	기차역
+găng tay	장갑
+dơ	더러운
+dơi	박쥐
+cửa hàng	가게, 상점
+quá	너무, 매우
+này	이, 이것
+trạm	정거장
+đặt chỗ	예약하다
+biết	알다
+không	아니다, 않다
+yêu	사랑하다
+bố mẹ	부모님
+đứa con	자식, 아이
+nấu ăn	요리하다
+sinh viên	대학생
+nấu	요리하다, 끓이다
+cũng	~도, 역시
+học sinh	학생
+ngôi trường	학교
+học	배우다, 공부하다
+khách sạn	호텔
+làm việc	일하다
+nhà vệ sinh	화장실
+bằng	~으로, ~와 같은
+cảm ơn	고맙습니다
+đi du lịch	여행하다
+từ điển	사전
+rất	매우, 아주
+vở	공책
+quyển	권 (책 세는 단위)
+sách	책
+đi	가다
+nghìn	천 (1,000)
+đẹp	예쁜, 아름다운
+rẻ	싼, 저렴한
+thật	정말, 진짜
+đắt tiền	비싼
+xe buýt	버스
+cần	필요하다
+sân bay	공항
+vé	표, 티켓
+xe taxi	택시
+tàu hoả	기차
+máy bay	비행기
+bay	날다
+đúng	맞는, 옳은
+thông minh	똑똑한
+tốt	좋은
+bạn học	반 친구
+những	~들 (복수형), 이들
+bọn họ	그들
+đàn ông	남자
+phụ nữ	여자
+đứa trẻ	아이, 어린이
+bánh mì	빵, 반미
+gia đình	가족
+mèo	고양이
+chó	개
+con	자식, 마리 (동물 단위)
+ghét	싫어하다
+con gái	딸, 여자
+vợ	아내
+chồng	남편
+con trai	아들, 남자
+em gái	여동생
+diễn	연기하다, 공연하다
+em trai	남동생
+trở thành	~이 되다
+đô	달러
+trăm	백 (100)
+mua	사다
+đồng	동 (화폐 단위)
+mua sắm	쇼핑하다
+mươi	10 (십 단위)
+mẹ	엄마, 어머니
+không phải	~이 아니다
+anh	형, 오빠, 당신
+anh trai	형, 오빠
+bố	아빠, 아버지
+của	~의
+bác sĩ	의사
+xin chào	안녕하세요
+muốn	원하다
+đường	설탕, 길
+với	~와 함께
+sữa	우유
+đá	얼음, 돌
+nóng	뜨거운
+và	그리고, ~와
+anh ấy	그 (남자)
+cô ấy	그녀 (여자)
+tiếng	언어, 소리
+nói	말하다
+giáo viên	선생님
+chúc ngủ ngon	안녕히 주무세요
+gặp lại sau	나중에 봐요
+chào tạm biệt	안녕히 가세요
+một	1 (하나)
+tách	찻잔, 컵
+trà	차 (Tea)
+cho	주다, ~을 위해
+cà phê	커피
+xin lỗi	미안합니다, 실례합니다
+đây	여기, 이것
+năm	년(Year), 5
+bốn	4
+mì	국수, 면
+có	있다, 가지다
+phở	쌀국수 (퍼)
+thích	좋아하다
+ba	3, 아빠
+buổi tối	저녁
+gặp	만나다
+khoẻ	건강한, 잘 지내는
+đói	배고픈
+mọi người	모든 사람, 여러분
+buổi sáng	아침
+sáng	아침, 밝은
+căn nhà	집
+sống	살다
+ở	~에 있다, ~에서
+xe ô tô	자동차
+ăn	먹다
+súp	수프
+bát	그릇
+vâng	네 (공손한 대답)
+xin	부탁하다, 청하다
+hộ chiếu	여권
+nước	물, 나라
+người	사람
+tôi	나 (저)
+là	~이다
+chào	안녕 (인사)
+bàn	책상, 식탁
+bạn	친구, 당신
+hai	2
+chúng tôi	우리
+phải không	맞습니까?, ~이지요?
+đến	오다, 도착하다
+đến từ	~에서 오다
+chị gái	언니, 누나
+ngân hàng	은행
+nổi tiếng	유명한
+đó	그것, 저것
+nhà hàng	식당
+đâu	어디
+ở đâu	어디에 있나요
+có thể	~할 수 있다, 가능하다
+cần phải	~해야 한다
+phải	~해야 한다, 옳은, 오른쪽
+không thể	~할 수 없다
+không được	~하면 안 된다 (금지)
+cùng nhau	함께, 같이
+bỗng	갑자기
+suýt	거의, 하마터면
+lược	빗
+máy tính bảng	태블릿 PC
+máy giặt	세탁기
+nhật ký	일기
+kéo	가위
+bút chì	연필
+máy ảnh	카메라, 사진기
+bàn phím	키보드
+tủ lạnh	냉장고
+quạt	선풍기
+nhẫn	반지
+kính	안경, 유리
+ảnh	사진
+cờ	깃발
+bột	가루
+quà	선물
+dao	칼
+diều	연
+nam châm	자석
+thiệp	카드
+thẻ tín dụng	신용카드
+bong bóng	풍선
+màn hình	화면, 모니터
+xấu	나쁜, 못생긴
+quen thuộc	익숙한
+hơi	약간, 숨
+dám	감히 ~하다
+giữ	지키다, 유지하다
+tắm	목욕하다
+tìm ra	찾아내다
+xứng đáng	자격이 있다, 가치가 있다
+trở lại	돌아오다
+sau	뒤에, 나중에
+đối mặt	직면하다, 마주하다
+thoả mãn	만족하다
+hỗ trợ	지원하다, 돕다
+khuyên	조언하다, 권하다
+luyện tập	연습하다
+đánh giá cao	높이 평가하다
+không bao giờ	결코 ~않다 (Never)
+luôn	항상
+hiếm khi	드물게
+thường xuyên	자주, 보통
+đôi khi	가끔
+trống rỗng	텅 빈
+no	배부른
+chăm chỉ	열심히, 부지런한
+vậy nên	그래서
+vậy	그러면, 그렇게
+vậy mà	그런데도, 하지만
+hơn nữa	게다가, 더구나
+một khi	일단 ~하면
+như vậy	그렇게, 그 결과
+chỉ	오직, 단지
+trừ khi	~하지 않는 한
+búa	망치
+vật thể	물체
+máy	기계
+thang	사다리
+hộp	상자, 박스
+giấy	종이
+bàn chải	솔, 칫솔
+chìa khoá	열쇠
+chưa	아직 (~않다)
+xung quanh	주위에
+thậm chí	심지어
+dù sao	어쨌든
+khoảng	약, 대략
+nói chung	일반적으로
+gần như	거의
+với nhau	서로, 함께
+hợp tác	협력하다
+khẳng định	확언하다, 긍정하다
+trừng phạt	처벌하다
+phát hiện	발견하다
+nhận ra	깨닫다, 알아차리다
+đam mê	열정
+cả tin	잘 믿는, 속기 쉬운
+quan tâm	관심을 가지다
+kỹ sư	기술자, 엔지니어
+ngư dân	어부
+ca sĩ	가수
+kế toán	회계사
+công nhân	노동자
+cảnh sát	경찰
+nhạc sĩ	작곡가, 음악가
+nghệ sĩ	예술가
+nghề nghiệp	직업
+thuyền trưởng	선장
+luật sư	변호사
+sự nghiệp	경력, 직업
+thư ký	비서
+sẽ	~할 것이다
+linh hoạt	융통성 있는, 유연한
+cạnh tranh	경쟁하다
+vẻ đẹp	아름다움
+tập trung	집중하다
+nhà toán học	수학자
+nhà báo	기자
+nhà sư	승려
+nhà lãnh đạo	지도자
+Trung Quốc	중국
+Đức	독일
+Tây Ban Nha	스페인
+Pháp	프랑스
+lười biếng	게으른
+bất lịch sự	무례한
+bất lợi	불리한 점, 약점
+khiêm tốn	겸손한
+lợi thế	이점, 유리한 점
+may mắn	운이 좋은, 행운
+tính cách	성격
+chất lượng	품질
+tử tế	친절한, 상냥한
+chuyên nghiệp	전문적인
+bảo thủ	보수적인
+tôn trọng	존중하다
+siêng năng	부지런한
+xấu tính	성격이 나쁜, 심술궂은
+tham lam	탐욕스러운
+bất cẩn	부주의한
+sự	(추상명사 앞에 붙는) 것, 바
+sự thật	진실
+sự đơn giản	단순함
+thủ đô	수도
+quốc tịch	국적
+ngôn ngữ	언어
+quốc gia	국가
+văn hoá	문화
+nhà khoa học	과학자
+nhà thiết kế	디자이너
+kiến trúc sư	건축가
+tương lai	미래
+nha sĩ	치과의사
+y tá	간호사
+nông dân	농부
+đầu bếp	요리사
+hàn quốc	한국
+nhật	일본
+nga	러시아
+úc	호주
+ấn độ	인도`;
+
+// ── 파싱 ───────────────────────────────────────────────────
+const MASTER = [];
+RAW.trim().split("\n").forEach(line => {
+  const p = line.split("\t");
+  if (p.length >= 2) {
+    const vi = p[0].trim(), ko = p.slice(1).join(" ").trim();
+    if (vi && !MASTER.find(w => w.vi === vi)) MASTER.push({vi, ko});
+  }
+});
+const TOTAL = MASTER.length;
+const STORAGE_KEY = "viet-srs-v3";
+
+// ── SM-2 ──────────────────────────────────────────────────
+function sm2(card, quality) {
+  let {easiness=2.5, interval=0, reps=0} = card;
+  if (quality >= 2) {
+    if (reps===0) interval=1; else if (reps===1) interval=3; else interval=Math.round(interval*easiness);
+    reps++;
+  } else { reps=0; interval=1; }
+  easiness = Math.max(1.3, easiness + 0.1 - (3-quality)*(0.08+(3-quality)*0.02));
+  return {easiness, interval, reps, nextReview: Date.now()+interval*864e5};
+}
+
+function norm(s){ return s.toLowerCase().normalize("NFC").replace(/\s+/g," ").trim(); }
+function todayKey(){ return new Date().toISOString().slice(0,10); }
+
+function getDue(srs){
+  const now = Date.now();
+  const due = MASTER.filter(w=>{ const d=srs[w.vi]; return d && d.nextReview<=now; });
+  const nw  = MASTER.filter(w=>!srs[w.vi]);
+  return [...due, ...nw];
+}
+
+// ── TTS ───────────────────────────────────────────────────
+function speak(text, rate=0.85){
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang="vi-VN"; u.rate=rate;
+  const v = window.speechSynthesis.getVoices().find(v=>v.lang.startsWith("vi"));
+  if(v) u.voice=v;
+  window.speechSynthesis.speak(u);
+}
+window.speechSynthesis?.getVoices();
+window.speechSynthesis?.addEventListener("voiceschanged", ()=>window.speechSynthesis.getVoices());
+
+// ── 저장/불러오기 ─────────────────────────────────────────
+function saveData(srs, log){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({srs,log})); } catch(e){}
+}
+function loadData(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){ const p=JSON.parse(raw); return {srs:p.srs||{}, log:p.log||{}}; }
+  } catch(e){}
+  return {srs:{}, log:{}};
+}
+
+// ── 앱 상태 ───────────────────────────────────────────────
+let state = {
+  srs: {}, log: {},
+  phase: "home", // home|playing|correct|wrong|done
+  tab: 0,        // 0홈 1오답 2통계
+  queue: [], qIdx: 0,
+  input: "", streak: 0,
+  sessionCorrect: 0, sessionWrong: 0,
+  pulsing: false, shaking: false,
+  showDoneBanner: false,
+};
+
+function setState(patch){ Object.assign(state, patch); render(); }
+
+// ── 렌더 ──────────────────────────────────────────────────
+function render(){
+  const s = state;
+  const wrap = document.getElementById("wrap");
+  const isQuiz = s.phase==="playing"||s.phase==="correct"||s.phase==="wrong";
+  const isHome = s.phase==="home"||s.phase==="done";
+
+  const totalLearned  = Object.keys(s.srs).length;
+  const totalMastered = Object.values(s.srs).filter(d=>d.reps>=3).length;
+  const totalDue      = getDue(s.srs).length;
+
+  wrap.innerHTML = `
+    <!-- HEADER -->
+    <div class="header">
+      <span style="font-size:24px">🇻🇳</span>
+      <div>
+        <div class="header-title">베트남어 SRS</div>
+        <div class="header-sub">간격반복 받아쓰기</div>
+      </div>
+      ${isQuiz ? `<div class="streak-badge">🔥 ${s.streak}</div>` : ""}
+    </div>
+
+    ${isHome ? `
+    <!-- TABS -->
+    <div class="tabs">
+      ${["홈","오답노트","통계"].map((t,i)=>`
+        <button class="tab ${s.tab===i?"active":""}" onclick="setTab(${i})">${t}</button>
+      `).join("")}
+    </div>` : ""}
+
+    <!-- SCREENS -->
+    ${isHome && s.tab===0 ? renderHome(totalLearned, totalMastered, totalDue) : ""}
+    ${isHome && s.tab===1 ? renderWrongNote() : ""}
+    ${isHome && s.tab===2 ? renderStats(totalLearned, totalMastered) : ""}
+    ${isQuiz ? renderQuiz() : ""}
+  `;
+
+  // input 포커스 유지
+  if(s.phase==="playing"){
+    const inp = document.getElementById("answer-input");
+    if(inp){ inp.value=s.input; if(document.activeElement!==inp) inp.focus(); }
+  }
+}
+
+function renderHome(learned, mastered, due){
+  const s = state;
+  return `<div class="screen home-body">
+    ${s.showDoneBanner ? `
+    <div class="done-banner">
+      <span style="font-size:28px">🏆</span>
+      <div>
+        <div style="font-weight:700;color:#4ade80">세션 완료!</div>
+        <div style="font-size:13px;color:#a78bda;margin-top:2px">✅ ${s.sessionCorrect}  ❌ ${s.sessionWrong}</div>
+      </div>
+    </div>` : ""}
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-emoji">📅</div>
+        <div class="stat-value" style="color:${due>0?"#f7c948":"#4ade80"}">${due}</div>
+        <div class="stat-label">오늘 복습</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-emoji">📖</div>
+        <div class="stat-value" style="color:#a78bda">${learned}</div>
+        <div class="stat-label">학습 완료</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-emoji">⭐</div>
+        <div class="stat-value" style="color:#f7c948">${mastered}</div>
+        <div class="stat-label">마스터</div>
+      </div>
+    </div>
+
+    <div class="progress-card">
+      <div class="progress-header"><span>전체 진도</span><span>${learned} / ${TOTAL}</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${(learned/TOTAL)*100}%"></div></div>
+      <div class="progress-sub">${TOTAL-learned}개 미학습</div>
+    </div>
+
+    <button class="btn-primary" ${due===0?"disabled":""} onclick="startSession()">
+      ${due>0 ? `학습 시작 (${due}개) ▶` : "✅ 오늘 학습 완료!"}
+    </button>
+
+    <!-- 백업/복원 -->
+    <div class="backup-area">
+      <div class="backup-title">💾 데이터 백업 / 복원</div>
+      <div style="font-size:11px;color:#6a4aaa;margin-bottom:4px">백업 후 메모장에 저장해두세요. 앱 초기화 시 복원할 수 있어요.</div>
+      <div class="backup-btns">
+        <button class="backup-btn" onclick="exportData()">📤 백업 복사</button>
+        <button class="backup-btn" onclick="showImport()">📥 복원하기</button>
+      </div>
+      <div id="import-area" style="display:none;margin-top:6px">
+        <textarea class="backup-input" id="import-text" placeholder="백업 데이터를 붙여넣으세요..."></textarea>
+        <button class="backup-btn" style="width:100%;margin-top:6px" onclick="importData()">복원 실행</button>
+      </div>
+    </div>
+
+    ${learned>0 ? `<button class="btn-danger" onclick="resetData()">데이터 초기화</button>` : ""}
+  </div>`;
+}
+
+function renderWrongNote(){
+  const wrongList = Object.entries(state.srs)
+    .filter(([,d])=>d.wrongCount>0)
+    .sort((a,b)=>b[1].wrongCount-a[1].wrongCount)
+    .map(([vi,d])=>({vi, ko:MASTER.find(w=>w.vi===vi)?.ko||"", wrongCount:d.wrongCount, reps:d.reps}));
+
+  if(wrongList.length===0) return `
+    <div class="screen note-body">
+      <div class="note-empty">
+        <div style="font-size:48px">🎉</div>
+        <div style="font-size:15px">오답 기록이 없어요!</div>
+      </div>
+    </div>`;
+
+  return `<div class="screen note-body">
+    <div style="font-size:12px;color:#6a4aaa">총 ${wrongList.length}개 · 많이 틀린 순 · 탭하면 발음 재생</div>
+    ${wrongList.map(w=>`
+      <div class="note-item" onclick="speak('${w.vi.replace(/'/g,"\\'")}')">
+        <div class="note-count">❌ ${w.wrongCount}</div>
+        <div style="flex:1;min-width:0">
+          <div class="note-vi">${w.vi}</div>
+          <div class="note-ko">${w.ko}</div>
+        </div>
+        <div style="font-size:11px;color:#6a4aaa">${w.reps>=3?"⭐":w.reps>0?`🔄${w.reps}`:"🆕"}</div>
+        <span style="font-size:16px;opacity:.5">🔊</span>
+      </div>
+    `).join("")}
+  </div>`;
+}
+
+function renderStats(learned, mastered){
+  const log = state.log;
+  const totalC = Object.values(log).reduce((a,d)=>a+d.correct,0);
+  const totalW = Object.values(log).reduce((a,d)=>a+d.wrong,0);
+  const totalT = totalC+totalW;
+  const days   = Object.values(log).filter(d=>d.correct+d.wrong>0).length;
+  const acc    = totalT>0 ? Math.round(totalC/totalT*100)+"%" : "-";
+
+  const last14 = Array.from({length:14},(_,i)=>{
+    const d=new Date(); d.setDate(d.getDate()-(13-i));
+    const key=d.toISOString().slice(0,10);
+    const l=log[key]||{correct:0,wrong:0};
+    return {key, label:`${d.getMonth()+1}/${d.getDate()}`, correct:l.correct, wrong:l.wrong, total:l.correct+l.wrong};
+  });
+  const maxT = Math.max(...last14.map(d=>d.total),1);
+  const today = todayKey();
+
+  return `<div class="screen stats-body">
+    <div class="summary-grid">
+      ${[
+        {label:"전체 정답",value:totalC,color:"#4ade80",emoji:"✅"},
+        {label:"전체 오답",value:totalW,color:"#f87171",emoji:"❌"},
+        {label:"학습일수",value:days,color:"#f7c948",emoji:"📅"},
+        {label:"정답률",value:acc,color:"#a259ff",emoji:"🎯"},
+      ].map(s=>`
+        <div class="summary-card">
+          <div style="font-size:20px">${s.emoji}</div>
+          <div style="font-size:24px;font-weight:700;color:${s.color};margin-top:4px">${s.value}</div>
+          <div style="font-size:11px;color:#a78bda;margin-top:2px">${s.label}</div>
+        </div>
+      `).join("")}
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">최근 14일 학습량</div>
+      <div class="chart-bars">
+        ${last14.map(d=>{
+          const totalH = (d.total/maxT)*90;
+          const correctH = d.total>0?(d.correct/d.total)*totalH:0;
+          const wrongH = totalH-correctH;
+          const isToday = d.key===today;
+          return `<div class="chart-bar-wrap">
+            <div class="chart-bar-inner">
+              ${d.total>0 ? `
+                <div style="width:100%;height:${correctH}px;background:#4ade80;border-radius:3px 3px 0 0;opacity:${isToday?1:.7}"></div>
+                ${wrongH>0?`<div style="width:100%;height:${wrongH}px;background:#f87171;opacity:${isToday?1:.7}"></div>`:""}
+              ` : `<div style="width:100%;height:4px;background:#2a1a4a;border-radius:3px"></div>`}
+            </div>
+            <div class="chart-label ${isToday?"today":""}">${d.label}</div>
+          </div>`;
+        }).join("")}
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>정답</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>오답</div>
+      </div>
+    </div>
+
+    <div class="level-card">
+      <div class="chart-title">단어 레벨 분포</div>
+      ${[
+        {label:"🆕 미학습", count:TOTAL-learned, color:"#3d2c7a"},
+        {label:"🔄 학습중", count:learned-mastered, color:"#a259ff"},
+        {label:"⭐ 마스터", count:mastered, color:"#f7c948"},
+      ].map(s=>`
+        <div class="level-row">
+          <div class="level-header"><span>${s.label}</span><span>${s.count}개</span></div>
+          <div class="level-track"><div class="level-fill" style="width:${(s.count/TOTAL)*100}%;background:${s.color}"></div></div>
+        </div>
+      `).join("")}
+    </div>
+  </div>`;
+}
+
+function renderQuiz(){
+  const s = state;
+  const word = s.queue[s.qIdx];
+  if(!word) return "";
+  const d = s.srs[word.vi] || {};
+  const reps = d.reps||0, wrongCount = d.wrongCount||0;
+  const badgeLabel = reps===0?"🆕 새 단어":reps<3?`🔄 복습 ${reps}회`:"⭐ 숙련";
+  const badgeColor = reps===0?"#a78bda":reps<3?"#f7c948":"#4ade80";
+  const pct = (s.qIdx/s.queue.length)*100;
+
+  return `
+    <div class="quiz-progress">
+      <div class="quiz-prog-track"><div class="quiz-prog-fill" style="width:${pct}%"></div></div>
+      <div class="quiz-prog-text">
+        <span>✅ ${s.sessionCorrect}  ❌ ${s.sessionWrong}</span>
+        <span>${s.qIdx+1} / ${s.queue.length}</span>
+      </div>
+    </div>
+
+    <div class="quiz-body">
+      <div class="badge-row">
+        <div class="badge" style="color:${badgeColor}">${badgeLabel}</div>
+        ${wrongCount>0?`<div class="badge-wrong">❌ ${wrongCount}회 틀림</div>`:""}
+      </div>
+
+      <button class="listen-btn ${s.pulsing?"pulse":""}" onclick="handleSpeak()">
+        <div class="listen-icon">🔊</div>
+        <div class="listen-label">듣기</div>
+      </button>
+
+      <button class="slow-btn" onclick="speak('${word.vi.replace(/'/g,"\\'")}', 0.5)">🐢 천천히 듣기</button>
+
+      ${s.phase!=="playing" ? `
+      <div class="feedback ${s.phase}">
+        <div class="feedback-icon">${s.phase==="correct"?"✅":"❌"}</div>
+        <div class="feedback-label">${s.phase==="correct"?"정답!":"오답"}</div>
+        <div class="feedback-word">${word.vi}</div>
+        <div class="feedback-ko">${word.ko}</div>
+        ${s.phase==="correct"?`<div class="feedback-next">다음 복습: ${s.srs[word.vi]?.interval||1}일 후</div>`:""}
+        ${s.phase==="wrong"?`<div class="feedback-mine">내 답: ${s.input}</div>`:""}
+      </div>` : ""}
+    </div>
+
+    <div class="input-area">
+      <input id="answer-input"
+        class="answer-input ${s.phase==="correct"?"correct":s.phase==="wrong"?"wrong-state":""} ${s.shaking?"shaking":""}"
+        placeholder="철자 입력..."
+        autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+        ${s.phase!=="playing"?"disabled":""}
+        oninput="state.input=this.value"
+        onkeydown="if(event.key==='Enter')handleSubmit()"
+      >
+      <button class="confirm-btn ${s.phase!=="playing"?"next":""}" onclick="handleSubmit()">
+        ${s.phase==="playing"?"확인하기 →":"다음 단어 ▶"}
+      </button>
+    </div>
+  `;
+}
+
+// ── 액션 ──────────────────────────────────────────────────
+function setTab(i){ setState({tab:i}); }
+
+function startSession(){
+  const due = getDue(state.srs);
+  if(due.length===0){ setState({phase:"done", showDoneBanner:true}); return; }
+  const shuffled = [...due].sort(()=>Math.random()-.5);
+  setState({queue:shuffled, qIdx:0, streak:0, sessionCorrect:0, sessionWrong:0, input:"", phase:"playing", showDoneBanner:false});
+  setTimeout(()=>speak(shuffled[0].vi), 300);
+}
+
+function handleSpeak(){
+  const word = state.queue[state.qIdx];
+  if(!word) return;
+  setState({pulsing:true});
+  speak(word.vi);
+  setTimeout(()=>setState({pulsing:false}), 700);
+}
+
+function handleSubmit(){
+  const s = state;
+  if(s.phase==="playing"){
+    if(!s.input.trim()){ handleSpeak(); return; }
+    const word = s.queue[s.qIdx];
+    const ok = norm(s.input)===norm(word.vi);
+    const prev = s.srs[word.vi]||{};
+    const updated = {
+      ...sm2(prev, ok?2:0),
+      wrongCount: (prev.wrongCount||0)+(ok?0:1),
+      lastSeen: Date.now(),
+    };
+    const newSrs = {...s.srs, [word.vi]:updated};
+    const today = todayKey();
+    const tl = s.log[today]||{correct:0,wrong:0};
+    const newLog = {...s.log, [today]:{correct:tl.correct+(ok?1:0), wrong:tl.wrong+(ok?0:1)}};
+    saveData(newSrs, newLog);
+
+    if(ok){
+      setState({srs:newSrs, log:newLog, phase:"correct", streak:s.streak+1, sessionCorrect:s.sessionCorrect+1});
+    } else {
+      setState({srs:newSrs, log:newLog, phase:"wrong", streak:0, sessionWrong:s.sessionWrong+1, shaking:true});
+      setTimeout(()=>setState({shaking:false}), 400);
+      setTimeout(()=>speak(word.vi), 300);
+    }
+  } else {
+    const next = s.qIdx+1;
+    if(next>=s.queue.length){
+      setState({phase:"done", tab:0, showDoneBanner:true});
+    } else {
+      setState({qIdx:next, phase:"playing", input:""});
+      setTimeout(()=>speak(s.queue[next].vi), 150);
+      setTimeout(()=>{ const inp=document.getElementById("answer-input"); if(inp)inp.focus(); }, 100);
+    }
+  }
+}
+
+function exportData(){
+  const json = JSON.stringify({srs:state.srs, log:state.log});
+  navigator.clipboard?.writeText(json).then(()=>alert("📋 클립보드에 복사됐어요!\n메모장에 붙여넣기 해서 저장해두세요.")).catch(()=>{
+    prompt("아래 텍스트를 전체 복사하세요:", json);
+  });
+}
+
+function showImport(){
+  const area = document.getElementById("import-area");
+  if(area) area.style.display = area.style.display==="none"?"block":"none";
+}
+
+function importData(){
+  const text = document.getElementById("import-text")?.value?.trim();
+  if(!text){ alert("데이터를 입력해주세요."); return; }
+  try {
+    const p = JSON.parse(text);
+    if(!p.srs) throw new Error("형식 오류");
+    saveData(p.srs, p.log||{});
+    const loaded = loadData();
+    setState({srs:loaded.srs, log:loaded.log, phase:"home", showDoneBanner:false});
+    alert("✅ 복원 완료! " + Object.keys(p.srs).length + "개 단어 데이터를 불러왔어요.");
+  } catch(e){
+    alert("❌ 데이터 형식이 잘못됐어요. 다시 확인해주세요.");
+  }
+}
+
+function resetData(){
+  if(confirm("학습 데이터를 초기화할까요?")){
+    saveData({},{});
+    setState({srs:{}, log:{}, showDoneBanner:false});
+  }
+}
+
+// ── 초기 로드 ─────────────────────────────────────────────
+const loaded = loadData();
+state.srs = loaded.srs;
+state.log = loaded.log;
+render();
+</script>
+</body>
+</html>

@@ -343,9 +343,13 @@ function render() {
 
 /* ─── Header ─────────────────────────────────────────────── */
 function renderHeader() {
-  const streak = App.screen === 'quiz'
-    ? `<div class="streak">🔥 ${App.streak}</div>` : '';
-  return `<div class="header"><span class="header-flag">🇻🇳</span>${streak}</div>`;
+  if (App.screen === 'quiz') {
+    return `<div class="header">
+      <button onclick="goHome()" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:4px 8px 4px 0;line-height:1;">←</button>
+      <div class="streak">🔥 ${App.streak}</div>
+    </div>`;
+  }
+  return `<div class="header"><span class="header-flag">🇻🇳</span></div>`;
 }
 
 /* ─── Tabs ───────────────────────────────────────────────── */

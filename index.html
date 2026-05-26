@@ -177,12 +177,12 @@ const Store = {
     // 3순위: 아직 안 본 새 단어
     const unseen = WORDS.filter(w => !this.srs[w.vi]);
 
-    // 합쳐서 최대 20개
+    // 전체 합치기
     const combined = [...wrong, ...upcoming, ...unseen];
-    if (combined.length > 0) return combined.slice(0, 20);
+    if (combined.length > 0) return combined;
 
     // 다 없으면 전체 랜덤
-    return shuffle(WORDS).slice(0, 20);
+    return shuffle(WORDS);
   },
 
   get learned()  { return Object.keys(this.srs).length; },

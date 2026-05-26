@@ -10,146 +10,59 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════════
-   RESET & BASE
-═══════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;background:#0d0d1a;overscroll-behavior:none;-webkit-text-size-adjust:none;}
 body{font-family:'Noto Sans KR',sans-serif;color:#f0e6ff;}
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-thumb{background:#3d2c7a;border-radius:99px;}
-
-/* ═══════════════════════════════════════════════
-   TOKENS
-═══════════════════════════════════════════════ */
-:root {
-  --bg:       #0d0d1a;
-  --surface:  #1e1440;
-  --border:   #3d2c7a;
-  --accent:   #f7c948;
-  --purple:   #a259ff;
-  --green:    #4ade80;
-  --red:      #f87171;
-  --muted:    #a78bda;
-  --dim:      #6a4aaa;
-}
-
-/* ═══════════════════════════════════════════════
-   ANIMATIONS
-═══════════════════════════════════════════════ */
-@keyframes fadeUp  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-@keyframes popIn   { from{transform:scale(.9);opacity:0} to{transform:scale(1);opacity:1} }
-@keyframes shake   { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)} }
-@keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-/* ═══════════════════════════════════════════════
-   LAYOUT
-═══════════════════════════════════════════════ */
-#app { min-height:100dvh; display:flex; flex-direction:column; align-items:center; }
-.wrap { width:100%; max-width:480px; display:flex; flex-direction:column; min-height:100dvh; }
-
-/* ═══════════════════════════════════════════════
-   HEADER
-═══════════════════════════════════════════════ */
-.header {
-  padding: 12px 20px 10px;
-  display: flex; align-items: center; justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.header-flag { font-size:28px; line-height:1; }
-.streak { background:var(--surface); border:1.5px solid var(--border); border-radius:20px; padding:4px 12px; font-size:14px; font-weight:700; color:var(--accent); }
-
-/* ═══════════════════════════════════════════════
-   TABS
-═══════════════════════════════════════════════ */
-.tabs { display:flex; border-bottom:1px solid var(--border); flex-shrink:0; overflow-x:auto; }
-.tabs::-webkit-scrollbar { display:none; }
-.tab {
-  flex:1; min-width:52px; padding:9px 4px;
-  background:none; border:none; border-bottom:2px solid transparent;
-  color:var(--dim); font-size:12px; font-family:'Noto Sans KR',sans-serif;
-  cursor:pointer; white-space:nowrap; transition:color .15s;
-}
-.tab.on { border-bottom-color:var(--accent); color:var(--accent); font-weight:700; }
-
-/* ═══════════════════════════════════════════════
-   SHARED COMPONENTS
-═══════════════════════════════════════════════ */
-.card { background:var(--surface); border:1.5px solid var(--border); border-radius:16px; padding:14px 16px; }
-.btn-grad {
-  width:100%; padding:16px; border-radius:18px; border:none;
-  background:linear-gradient(135deg,var(--purple),var(--accent));
-  color:#0d0d1a; font-size:17px; font-weight:700;
-  font-family:'Noto Sans KR',sans-serif; cursor:pointer;
-}
-.btn-grad:disabled { background:var(--surface); color:var(--muted); }
-.btn-ghost { background:none; border:none; color:var(--dim); font-size:12px; cursor:pointer; padding:8px; font-family:'Noto Sans KR',sans-serif; }
-.prog-track { height:5px; background:var(--bg); border-radius:99px; overflow:hidden; }
-.prog-fill  { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--purple),var(--accent)); transition:width .4s; }
-.badge      { font-size:11px; background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:3px 10px; }
-.badge-err  { font-size:11px; color:var(--red); background:#180606; border:1px solid #6e2a2a; border-radius:20px; padding:3px 10px; }
-
-/* ═══════════════════════════════════════════════
-   FLASHCARD
-═══════════════════════════════════════════════ */
-.flash-scene  { perspective:800px; width:100%; height:220px; cursor:pointer; }
-.flash-inner  { width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform .5s cubic-bezier(.4,0,.2,1); }
-.flash-inner.flipped { transform:rotateY(180deg); }
-.flash-face   { position:absolute; inset:0; border-radius:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; backface-visibility:hidden; padding:24px; }
-.flash-front  { background:linear-gradient(145deg,var(--surface),#16102e); border:1.5px solid var(--border); }
-.flash-back   { background:linear-gradient(145deg,#0d2b1e,#051810); border:1.5px solid #2a5e44; transform:rotateY(180deg); }
-
-/* ═══════════════════════════════════════════════
-   QUIZ INPUT AREA
-═══════════════════════════════════════════════ */
-.input-area {
-  flex-shrink:0; padding:10px 16px;
-  padding-bottom:calc(12px + env(safe-area-inset-bottom));
-  border-top:1px solid var(--border); background:var(--bg);
-  display:flex; flex-direction:column; gap:8px;
-}
-.answer-input {
-  width:100%; padding:13px 16px; border-radius:14px;
-  border:2px solid var(--border); background:#0a081a;
-  color:var(--f0e6ff,#f0e6ff); font-size:20px; text-align:center;
-  outline:none; font-family:monospace; letter-spacing:1px; transition:border-color .2s;
-}
-.answer-input:disabled { opacity:.7; }
-.answer-input.ok   { border-color:#2a6e44; color:var(--green); }
-.answer-input.fail { border-color:#6e2a2a; color:var(--red); }
-.answer-input.shaking { animation:shake .35s ease; }
-.confirm-btn {
-  width:100%; padding:14px; border-radius:14px; border:none;
-  background:linear-gradient(135deg,var(--purple),var(--accent));
-  color:#0d0d1a; font-size:17px; font-weight:700;
-  font-family:'Noto Sans KR',sans-serif; cursor:pointer;
-}
-.confirm-btn.next { background:var(--surface); color:var(--muted); }
-
-/* ═══════════════════════════════════════════════
-   FEEDBACK
-═══════════════════════════════════════════════ */
-.feedback { width:100%; padding:14px 16px; border-radius:18px; text-align:center; animation:popIn .22s ease; }
-.feedback.ok   { border:1.5px solid #2a6e44; background:#06180e; }
-.feedback.fail { border:1.5px solid #6e2a2a; background:#180606; }
-
-/* ═══════════════════════════════════════════════
-   STATS CHART
-═══════════════════════════════════════════════ */
-.chart-wrap  { overflow-x:auto; -webkit-overflow-scrolling:touch; }
-.chart-bars  { display:flex; align-items:flex-end; gap:4px; height:100px; }
-.bar-col     { flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:2px; }
-.bar-inner   { width:100%; display:flex; flex-direction:column; justify-content:flex-end; height:90px; gap:1px; }
-.bar-label   { font-size:8px; color:var(--dim); transform:rotate(-30deg); margin-top:2px; white-space:nowrap; }
-.bar-label.today { color:var(--accent); font-weight:700; }
-
-/* ═══════════════════════════════════════════════
-   BACKUP
-═══════════════════════════════════════════════ */
-.backup-card { background:var(--surface); border:1.5px solid var(--border); border-radius:16px; padding:14px 16px; display:flex; flex-direction:column; gap:8px; }
-.backup-btn  { flex:1; padding:10px; border-radius:12px; border:1.5px solid var(--border); background:var(--bg); color:#f0e6ff; font-size:13px; font-family:'Noto Sans KR',sans-serif; cursor:pointer; }
-.backup-ta   { width:100%; height:70px; background:#0a081a; border:1.5px solid var(--border); border-radius:10px; color:#f0e6ff; font-size:11px; padding:8px; font-family:monospace; resize:none; outline:none; }
+:root{--bg:#0d0d1a;--surface:#1e1440;--border:#3d2c7a;--accent:#f7c948;--purple:#a259ff;--green:#4ade80;--red:#f87171;--muted:#a78bda;--dim:#6a4aaa;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+#app{min-height:100dvh;display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;display:flex;flex-direction:column;min-height:100dvh;}
+.header{padding:12px 20px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;}
+.header-flag{font-size:28px;line-height:1;}
+.streak{background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:4px 12px;font-size:14px;font-weight:700;color:var(--accent);}
+.tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex:1;min-width:52px;padding:9px 4px;background:none;border:none;border-bottom:2px solid transparent;color:var(--dim);font-size:12px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;white-space:nowrap;transition:color .15s;}
+.tab.on{border-bottom-color:var(--accent);color:var(--accent);font-weight:700;}
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:14px 16px;}
+.btn-grad{width:100%;padding:16px;border-radius:18px;border:none;background:linear-gradient(135deg,var(--purple),var(--accent));color:#0d0d1a;font-size:17px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
+.btn-grad:disabled{background:var(--surface);color:var(--muted);}
+.btn-ghost{background:none;border:none;color:var(--dim);font-size:12px;cursor:pointer;padding:8px;font-family:'Noto Sans KR',sans-serif;}
+.prog-track{height:5px;background:var(--bg);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--purple),var(--accent));transition:width .4s;}
+.badge{font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 10px;}
+.badge-err{font-size:11px;color:var(--red);background:#180606;border:1px solid #6e2a2a;border-radius:20px;padding:3px 10px;}
+.flash-scene{perspective:800px;width:100%;height:220px;cursor:pointer;}
+.flash-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+.flash-inner.flipped{transform:rotateY(180deg);}
+.flash-face{position:absolute;inset:0;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;padding:24px;}
+.flash-front{background:linear-gradient(145deg,var(--surface),#16102e);border:1.5px solid var(--border);}
+.flash-back{background:linear-gradient(145deg,#0d2b1e,#051810);border:1.5px solid #2a5e44;transform:rotateY(180deg);}
+.input-area{flex-shrink:0;padding:10px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--border);background:var(--bg);display:flex;flex-direction:column;gap:8px;}
+.answer-input{width:100%;padding:13px 16px;border-radius:14px;border:2px solid var(--border);background:#0a081a;color:#f0e6ff;font-size:20px;text-align:center;outline:none;font-family:monospace;letter-spacing:1px;transition:border-color .2s;}
+.answer-input:disabled{opacity:.7;}
+.answer-input.ok{border-color:#2a6e44;color:var(--green);}
+.answer-input.fail{border-color:#6e2a2a;color:var(--red);}
+.answer-input.shaking{animation:shake .35s ease;}
+.confirm-btn{width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--purple),var(--accent));color:#0d0d1a;font-size:17px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
+.confirm-btn.next{background:var(--surface);color:var(--muted);}
+.feedback{width:100%;padding:14px 16px;border-radius:18px;text-align:center;animation:popIn .22s ease;}
+.feedback.ok{border:1.5px solid #2a6e44;background:#06180e;}
+.feedback.fail{border:1.5px solid #6e2a2a;background:#180606;}
+.chart-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.chart-bars{display:flex;align-items:flex-end;gap:4px;height:100px;}
+.bar-col{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.bar-inner{width:100%;display:flex;flex-direction:column;justify-content:flex-end;height:90px;gap:1px;}
+.bar-label{font-size:8px;color:var(--dim);transform:rotate(-30deg);margin-top:2px;white-space:nowrap;}
+.bar-label.today{color:var(--accent);font-weight:700;}
+.backup-card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+.backup-btn{flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:#f0e6ff;font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
+.backup-ta{width:100%;height:70px;background:#0a081a;border:1.5px solid var(--border);border-radius:10px;color:#f0e6ff;font-size:11px;padding:8px;font-family:monospace;resize:none;outline:none;}
 </style>
 </head>
 <body>
@@ -158,10 +71,7 @@ body{font-family:'Noto Sans KR',sans-serif;color:#f0e6ff;}
 'use strict';
 
 /* ═══════════════════════════════════════════════════════════════
-   1. DATA
-═══════════════════════════════════════════════════════════════ */
-/* ═══════════════════════════════════════════════════════════════
-   2. WORD BANK  (loaded from words.json)
+   1. WORD BANK
 ═══════════════════════════════════════════════════════════════ */
 let WORDS = [];
 let TOTAL = 0;
@@ -172,30 +82,24 @@ async function loadWords() {
     const data = await res.json();
     WORDS = Object.freeze(data);
     TOTAL = WORDS.length;
-  } catch (e) {
-    console.error('words.json load failed:', e);
-  }
+  } catch (e) { console.error('words.json load failed:', e); }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   3. SM-2  (pure function)
+   2. SM-2
 ═══════════════════════════════════════════════════════════════ */
 function sm2(card = {}, quality) {
   let { easiness = 2.5, interval = 0, reps = 0 } = card;
   if (quality >= 2) {
     interval = reps === 0 ? 1 : reps === 1 ? 3 : Math.round(interval * easiness);
     reps++;
-  } else {
-    interval = 1;
-    reps = 0;
-  }
+  } else { interval = 1; reps = 0; }
   easiness = Math.max(1.3, easiness + 0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02));
   return { easiness, interval, reps, nextReview: Date.now() + interval * 864e5 };
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   4. STORAGE  (single source of truth)
-   schema: { srs: {[vi]: card}, log: {[yyyy-mm-dd]: {c,w}}, seen: vi[] }
+   3. STORAGE
 ═══════════════════════════════════════════════════════════════ */
 const STORAGE_KEY = 'viet-v5';
 
@@ -209,7 +113,7 @@ const Store = {
         const p = JSON.parse(raw);
         this._data = { srs: p.srs || {}, log: p.log || {}, seen: p.seen || [] };
       }
-    } catch (e) { /* silently use defaults */ }
+    } catch (e) {}
     return this;
   },
 
@@ -235,13 +139,6 @@ const Store = {
     this.save();
   },
 
-  markSeen(vi) {
-    if (!this._data.seen.includes(vi)) {
-      this._data.seen.push(vi);
-      this.save();
-    }
-  },
-
   reset() { this._data = { srs: {}, log: {}, seen: [] }; this.save(); },
 
   export() { return JSON.stringify(this._data); },
@@ -253,25 +150,52 @@ const Store = {
     this.save();
   },
 
-  // computed
   getDueWords() {
     const now = Date.now();
     const due = WORDS.filter(w => { const d = this.srs[w.vi]; return d && d.nextReview <= now; });
     const nw  = WORDS.filter(w => !this.srs[w.vi]);
     return [...due, ...nw];
   },
+
+  // ── 플래시카드 전용: 틀린 단어 + 내일 복습 예정 우선 ──────────
+  getFlashDeck() {
+    const now = Date.now();
+    const tomorrow = now + 864e5;
+
+    // 1순위: 틀린 적 있는 단어 (wrongCount > 0)
+    const wrong = WORDS.filter(w => {
+      const d = this.srs[w.vi];
+      return d && d.wrongCount > 0;
+    }).sort((a, b) => (this.srs[b.vi].wrongCount || 0) - (this.srs[a.vi].wrongCount || 0));
+
+    // 2순위: 내일 복습 예정 단어 (nextReview <= tomorrow)
+    const upcoming = WORDS.filter(w => {
+      const d = this.srs[w.vi];
+      return d && d.nextReview > now && d.nextReview <= tomorrow && !(d.wrongCount > 0);
+    });
+
+    // 3순위: 아직 안 본 새 단어
+    const unseen = WORDS.filter(w => !this.srs[w.vi]);
+
+    // 합쳐서 최대 20개
+    const combined = [...wrong, ...upcoming, ...unseen];
+    if (combined.length > 0) return combined.slice(0, 20);
+
+    // 다 없으면 전체 랜덤
+    return shuffle(WORDS).slice(0, 20);
+  },
+
   get learned()  { return Object.keys(this.srs).length; },
   get mastered() { return Object.values(this.srs).filter(d => d.reps >= 3).length; },
 };
 
 /* ═══════════════════════════════════════════════════════════════
-   5. TTS
+   4. TTS
 ═══════════════════════════════════════════════════════════════ */
 const TTS = {
-  _ready: false,
   init() {
     if (!window.speechSynthesis) return;
-    const load = () => { window.speechSynthesis.getVoices(); this._ready = true; };
+    const load = () => window.speechSynthesis.getVoices();
     load();
     window.speechSynthesis.addEventListener('voiceschanged', load);
   },
@@ -287,7 +211,7 @@ const TTS = {
 };
 
 /* ═══════════════════════════════════════════════════════════════
-   6. HELPERS
+   5. HELPERS
 ═══════════════════════════════════════════════════════════════ */
 const norm     = s => s.toLowerCase().normalize('NFC').replace(/\s+/g, ' ').trim();
 const todayKey = () => new Date().toISOString().slice(0, 10);
@@ -295,53 +219,34 @@ const shuffle  = arr => [...arr].sort(() => Math.random() - 0.5);
 const esc      = s => s.replace(/'/g, "\\'");
 
 /* ═══════════════════════════════════════════════════════════════
-   7. APP STATE
+   6. APP STATE
 ═══════════════════════════════════════════════════════════════ */
 const App = {
-  // navigation
-  tab: 0,        // 0=flash 1=dictation 2=krvi 3=wrong 4=stats
-  screen: 'home', // home | quiz | done
-
-  // quiz
-  mode: null,    // 'dictation' | 'krvi'
-  queue: [],
-  qIdx: 0,
-  phase: 'idle', // idle | playing | correct | wrong
+  tab: 0,           // 0=flash 1=dictation 2=krvi 3=wrong 4=stats
+  screen: 'home',   // home | quiz | done
+  mode: null,
+  queue: [], qIdx: 0,
+  phase: 'idle',    // idle | playing | correct | wrong
   input: '',
-  streak: 0,
-  sesC: 0,
-  sesW: 0,
-  pulsing: false,
-  shaking: false,
-
-  // flashcard
-  flashDeck: [],
-  flashIdx: 0,
-  flipped: false,
-
-  // stats
+  streak: 0, sesC: 0, sesW: 0,
+  pulsing: false, shaking: false,
+  flashDeck: [], flashIdx: 0, flipped: false,
   chartDays: 14,
 };
 
 /* ═══════════════════════════════════════════════════════════════
-   8. RENDERER  (one-way: state → DOM)
+   7. RENDERER
 ═══════════════════════════════════════════════════════════════ */
 function render() {
   const root = document.getElementById('root');
   const isQuiz = App.screen === 'quiz';
-
-  root.innerHTML = renderHeader() +
-    (!isQuiz ? renderTabs() : '') +
-    renderScreen();
-
-  // restore input focus & value
+  root.innerHTML = renderHeader() + (!isQuiz ? renderTabs() : '') + renderScreen();
   if (App.phase === 'playing') {
     const inp = document.getElementById('qi');
     if (inp) { inp.value = App.input; if (document.activeElement !== inp) inp.focus(); }
   }
 }
 
-/* ─── Header ─────────────────────────────────────────────── */
 function renderHeader() {
   if (App.screen === 'quiz') {
     return `<div class="header">
@@ -352,7 +257,6 @@ function renderHeader() {
   return `<div class="header"><span class="header-flag">🇻🇳</span></div>`;
 }
 
-/* ─── Tabs ───────────────────────────────────────────────── */
 function renderTabs() {
   const labels = ['플래시카드', '받아쓰기', '🇰🇷→🇻🇳', '오답노트', '통계'];
   return `<div class="tabs">${labels.map((l, i) =>
@@ -360,7 +264,6 @@ function renderTabs() {
   ).join('')}</div>`;
 }
 
-/* ─── Screen dispatcher ──────────────────────────────────── */
 function renderScreen() {
   if (App.screen === 'quiz') return renderQuiz();
   if (App.screen === 'done') return renderDone();
@@ -374,23 +277,33 @@ function renderScreen() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   9. SCREENS
+   8. SCREENS
 ═══════════════════════════════════════════════════════════════ */
 
-/* ─── Flash home ─────────────────────────────────────────── */
+/* ─── 플래시카드 ──────────────────────────────────────────── */
 function renderFlashHome() {
-  if (!App.flashDeck.length) App.flashDeck = buildFlashDeck();
+  if (!App.flashDeck.length) App.flashDeck = Store.getFlashDeck();
   const deck = App.flashDeck;
   const idx  = Math.min(App.flashIdx, deck.length - 1);
   const word = deck[idx];
-  const seenPct = ((Store.seen.length / TOTAL) * 100).toFixed(0);
+
+  // 덱 구성 정보
+  const wrongCount    = deck.filter(w => Store.srs[w.vi]?.wrongCount > 0).length;
+  const upcomingCount = deck.filter(w => {
+    const d = Store.srs[w.vi];
+    return d && d.nextReview > Date.now() && d.nextReview <= Date.now() + 864e5 && !d.wrongCount;
+  }).length;
+  const newCount = deck.filter(w => !Store.srs[w.vi]).length;
 
   return `<div style="flex:1;display:flex;flex-direction:column;padding:16px 18px;gap:14px;animation:fadeUp .3s ease;">
+
+    <!-- 덱 구성 정보 -->
     <div class="card" style="padding:10px 14px;">
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;">
-        <span>열람 진도</span><span>${Store.seen.length} / ${TOTAL}</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        ${wrongCount > 0 ? `<div style="font-size:11px;color:var(--red);background:#180606;border:1px solid #6e2a2a;border-radius:20px;padding:3px 10px;">❌ 오답 ${wrongCount}개</div>` : ''}
+        ${upcomingCount > 0 ? `<div style="font-size:11px;color:var(--accent);background:#1a1000;border:1px solid #6e4a00;border-radius:20px;padding:3px 10px;">📅 내일복습 ${upcomingCount}개</div>` : ''}
+        ${newCount > 0 ? `<div style="font-size:11px;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 10px;">🆕 새단어 ${newCount}개</div>` : ''}
       </div>
-      <div class="prog-track"><div class="prog-fill" style="width:${seenPct}%"></div></div>
     </div>
 
     <div class="flash-scene" onclick="flashFlip()">
@@ -419,12 +332,7 @@ function renderFlashHome() {
   </div>`;
 }
 
-function buildFlashDeck() {
-  const unseen = WORDS.filter(w => !Store.seen.includes(w.vi));
-  return unseen.length ? unseen.slice(0, 20) : shuffle(WORDS).slice(0, 20);
-}
-
-/* ─── Quiz home (dictation / krvi) ──────────────────────── */
+/* ─── 퀴즈 홈 ────────────────────────────────────────────── */
 function renderQuizHome(mode) {
   const due = Store.getDueWords().length;
   const label = mode === 'dictation' ? '받아쓰기' : '🇰🇷→🇻🇳';
@@ -433,9 +341,9 @@ function renderQuizHome(mode) {
   return `<div style="flex:1;display:flex;flex-direction:column;padding:18px;gap:14px;animation:fadeUp .3s ease;">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
       ${[
-        { e:'📅', v:due,             c:due>0?'var(--accent)':'var(--green)', l:'복습 대기' },
-        { e:'📖', v:Store.learned,   c:'var(--muted)',                       l:'학습 완료' },
-        { e:'⭐', v:Store.mastered,  c:'var(--accent)',                      l:'마스터' },
+        { e:'📅', v:due,            c:due>0?'var(--accent)':'var(--green)', l:'복습 대기' },
+        { e:'📖', v:Store.learned,  c:'var(--muted)',                       l:'학습 완료' },
+        { e:'⭐', v:Store.mastered, c:'var(--accent)',                      l:'마스터' },
       ].map(s => `<div class="card" style="text-align:center;padding:12px 6px;">
         <div style="font-size:20px">${s.e}</div>
         <div style="font-size:20px;font-weight:700;color:${s.c};margin-top:3px">${s.v}</div>
@@ -460,7 +368,7 @@ function renderQuizHome(mode) {
   </div>`;
 }
 
-/* ─── Quiz screen ────────────────────────────────────────── */
+/* ─── 퀴즈 화면 ──────────────────────────────────────────── */
 function renderQuiz() {
   if (App.phase === 'idle') return '';
   const word = App.queue[App.qIdx];
@@ -469,8 +377,17 @@ function renderQuiz() {
   const card  = Store.srs[word.vi] || {};
   const reps  = card.reps || 0;
   const wc    = card.wrongCount || 0;
-  const bLabel = reps === 0 ? '🆕 새 단어' : reps < 3 ? `🔄 ${reps}회` : '⭐ 숙련';
-  const bColor = reps === 0 ? 'var(--muted)' : reps < 3 ? 'var(--accent)' : 'var(--green)';
+
+  // ── 뱃지 로직 ──
+  // 한 번이라도 출제된 적 있으면(srs에 기록 있으면) 복습 표시
+  const hasRecord = !!Store.srs[word.vi];
+  const bLabel = !hasRecord ? '🆕 새 단어'
+               : reps >= 3  ? '⭐ 숙련'
+               : `🔄 복습 ${reps}회`;
+  const bColor = !hasRecord ? 'var(--muted)'
+               : reps >= 3  ? 'var(--green)'
+               : 'var(--accent)';
+
   const pct    = (App.qIdx / App.queue.length) * 100;
   const isDict = App.mode === 'dictation';
 
@@ -529,7 +446,7 @@ function renderQuiz() {
     </div>`;
 }
 
-/* ─── Done screen ────────────────────────────────────────── */
+/* ─── 완료 화면 ──────────────────────────────────────────── */
 function renderDone() {
   return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;gap:20px;text-align:center;animation:fadeUp .4s ease;">
     <div style="font-size:64px">${App.sesC > App.sesW ? '🏆' : '💪'}</div>
@@ -542,7 +459,7 @@ function renderDone() {
   </div>`;
 }
 
-/* ─── Wrong note ─────────────────────────────────────────── */
+/* ─── 오답노트 ───────────────────────────────────────────── */
 function renderWrongNote() {
   const list = Object.entries(Store.srs)
     .filter(([, d]) => d.wrongCount > 0)
@@ -566,7 +483,7 @@ function renderWrongNote() {
   </div>`;
 }
 
-/* ─── Stats ──────────────────────────────────────────────── */
+/* ─── 통계 ───────────────────────────────────────────────── */
 function renderStats() {
   const log  = Store.log;
   const allC = Object.values(log).reduce((a, d) => a + d.c, 0);
@@ -587,7 +504,6 @@ function renderStats() {
   const barW = Math.max(Math.floor(320 / n), 10);
 
   return `<div style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:14px;animation:fadeUp .3s ease;">
-
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
       ${[
         { e:'✅', v:allC,      c:'var(--green)',  l:'전체 정답' },
@@ -636,9 +552,9 @@ function renderStats() {
     <div class="card">
       <div style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:700">단어 레벨</div>
       ${[
-        { l:'🆕 미학습', c:TOTAL - Store.learned,               col:'var(--border)' },
-        { l:'🔄 학습중', c:Store.learned - Store.mastered,      col:'var(--purple)' },
-        { l:'⭐ 마스터', c:Store.mastered,                      col:'var(--accent)' },
+        { l:'🆕 미학습', c:TOTAL - Store.learned,          col:'var(--border)' },
+        { l:'🔄 학습중', c:Store.learned - Store.mastered, col:'var(--purple)' },
+        { l:'⭐ 마스터', c:Store.mastered,                 col:'var(--accent)' },
       ].map(s => `<div style="margin-bottom:8px;">
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px;"><span>${s.l}</span><span>${s.c}개</span></div>
         <div class="prog-track"><div style="height:100%;border-radius:99px;background:${s.col};width:${(s.c/TOTAL)*100}%;transition:width .6s"></div></div>
@@ -657,29 +573,26 @@ function renderStats() {
         <button class="backup-btn" style="width:100%;margin-top:6px" onclick="doImport()">복원 실행</button>
       </div>
     </div>
-
   </div>`;
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   10. ACTIONS
+   9. ACTIONS
 ═══════════════════════════════════════════════════════════════ */
-
 function setTab(i) { App.tab = i; App.screen = 'home'; render(); }
 function goHome()  { App.screen = 'home'; render(); }
 
-/* ── Flashcard ── */
+/* ── 플래시카드 ── */
 function flashFlip() { App.flipped = !App.flipped; render(); }
 
 function flashNext() {
-  const word = App.flashDeck[App.flashIdx];
-  Store.markSeen(word.vi);
   if (App.flashIdx < App.flashDeck.length - 1) {
     App.flashIdx++;
     App.flipped = false;
     render();
   } else {
-    App.flashDeck = buildFlashDeck();
+    // 덱 완료 → 새 덱 빌드
+    App.flashDeck = Store.getFlashDeck();
     App.flashIdx = 0;
     App.flipped = false;
     render();
@@ -690,21 +603,15 @@ function flashPrev() {
   if (App.flashIdx > 0) { App.flashIdx--; App.flipped = false; render(); }
 }
 
-/* ── Quiz ── */
+/* ── 퀴즈 ── */
 function startQuiz(mode) {
   const due = Store.getDueWords();
   if (!due.length) { App.screen = 'done'; App.sesC = 0; App.sesW = 0; render(); return; }
-  App.mode   = mode;
-  App.queue  = shuffle(due);
-  App.qIdx   = 0;
-  App.streak = 0;
-  App.sesC   = 0;
-  App.sesW   = 0;
-  App.input  = '';
-  App.phase  = 'playing';
-  App.screen = 'quiz';
+  App.mode = mode; App.queue = shuffle(due); App.qIdx = 0;
+  App.streak = 0; App.sesC = 0; App.sesW = 0;
+  App.input = ''; App.phase = 'playing'; App.screen = 'quiz';
   render();
-  if (mode === 'dictation') setTimeout(() => { TTS.speak(App.queue[0].vi); }, 300);
+  if (mode === 'dictation') setTimeout(() => TTS.speak(App.queue[0].vi), 300);
   setTimeout(() => { const i = document.getElementById('qi'); if (i) i.focus(); }, 200);
 }
 
@@ -742,7 +649,7 @@ function quizSubmit() {
   }
 }
 
-/* ── Backup ── */
+/* ── 백업 ── */
 function doExport() {
   const json = Store.export();
   navigator.clipboard?.writeText(json)
@@ -770,7 +677,7 @@ function confirmReset() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   11. BOOT
+   10. BOOT
 ═══════════════════════════════════════════════════════════════ */
 (async () => {
   await loadWords();

@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="🇻🇳 발음">
+<title>🇻🇳 베트남어 발음 가이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:#0d0d1a;overscroll-behavior:none;-webkit-text-size-adjust:none;}
+body{font-family:'Noto Sans KR',sans-serif;color:#f0e6ff;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:#3d2c7a;border-radius:99px;}
+
+:root{
+  --bg:#0d0d1a;
+  --surface:#1e1440;
+  --border:#3d2c7a;
+  --accent:#f7c948;
+  --purple:#a259ff;
+  --green:#4ade80;
+  --red:#f87171;
+  --muted:#a78bda;
+  --dim:#6a4aaa;
+  --orange:#fb923c;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+#app{min-height:100dvh;display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;display:flex;flex-direction:column;min-height:100dvh;}
+
+/* ── Header ── */
+.header{
+  padding:12px 20px 10px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.header-flag{font-size:28px;line-height:1;}
+.header-title{font-family:'Boogaloo',cursive;font-size:18px;color:var(--accent);}
+
+/* ── Tabs ── */
+.tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{
+  flex:1;min-width:60px;padding:9px 4px;
+  background:none;border:none;border-bottom:2px solid transparent;
+  color:var(--dim);font-size:12px;font-family:'Noto Sans KR',sans-serif;
+  cursor:pointer;white-space:nowrap;transition:color .15s;
+}
+.tab.on{border-bottom-color:var(--accent);color:var(--accent);font-weight:700;}
+
+/* ── Cards ── */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:16px;}
+.section-title{
+  font-family:'Boogaloo',cursive;font-size:20px;color:var(--accent);
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;
+}
+
+/* ── 성조 카드 ── */
+.tone-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:16px;padding:14px 16px;
+  display:flex;flex-direction:column;gap:8px;
+  animation:fadeUp .3s ease;
+}
+.tone-card.active{border-color:var(--accent);background:#1a1200;}
+.tone-name{font-size:18px;font-weight:700;color:#f0e6ff;}
+.tone-vi{font-family:monospace;font-size:28px;color:var(--accent);font-weight:700;}
+.tone-symbol{font-size:13px;color:var(--muted);}
+.tone-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.tone-pitch{
+  height:48px;border-radius:10px;background:#0d0d1a;
+  position:relative;overflow:hidden;border:1px solid var(--border);
+}
+.tone-pitch svg{width:100%;height:100%;}
+.tts-btn{
+  padding:7px 14px;border-radius:20px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-size:13px;
+  font-family:'Noto Sans KR',sans-serif;cursor:pointer;
+  display:inline-flex;align-items:center;gap:4px;align-self:flex-start;
+}
+.tts-btn:active{background:var(--surface);}
+
+/* ── 최소대립쌍 ── */
+.minimal-pair{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+}
+.mp-card{
+  background:#0d0d1a;border:1.5px solid var(--border);border-radius:12px;
+  padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s;
+}
+.mp-card:active{border-color:var(--accent);background:var(--surface);}
+.mp-vi{font-family:monospace;font-size:22px;font-weight:700;color:var(--accent);}
+.mp-ko{font-size:11px;color:var(--muted);margin-top:3px;}
+.mp-tone{font-size:10px;color:var(--dim);margin-top:2px;}
+
+/* ── 성조 표기법 ── */
+.rule-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:14px;padding:13px 15px;margin-bottom:8px;
+}
+.rule-title{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px;}
+.rule-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:6px;}
+.rule-examples{display:flex;flex-wrap:wrap;gap:6px;}
+.rule-ex{
+  font-family:monospace;font-size:14px;color:#f0e6ff;
+  background:#0d0d1a;border:1px solid var(--border);
+  border-radius:8px;padding:3px 10px;cursor:pointer;
+}
+.rule-ex:active{border-color:var(--accent);}
+
+/* ── 연습 그리드 ── */
+.practice-grid{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:6px;
+}
+.practice-cell{
+  background:#0d0d1a;border:1.5px solid var(--border);
+  border-radius:10px;padding:8px 4px;text-align:center;
+  cursor:pointer;transition:all .15s;
+}
+.practice-cell:active{border-color:var(--accent);background:var(--surface);}
+.practice-vi{font-family:monospace;font-size:17px;font-weight:700;color:var(--accent);}
+
+/* ── 남부/북부 배지 ── */
+.region-badge{
+  display:inline-flex;gap:6px;margin-top:6px;
+}
+.badge-north{font-size:11px;background:#0a1a2a;border:1px solid #2a5e8a;border-radius:20px;padding:2px 8px;color:#60a5fa;}
+.badge-south{font-size:11px;background:#1a0a0a;border:1px solid #8a2a2a;border-radius:20px;padding:2px 8px;color:#f87171;}
+
+/* ── 정리 카드 ── */
+.summary-sentence{
+  font-family:monospace;font-size:22px;font-weight:700;
+  color:var(--accent);text-align:center;
+  background:#0d0d1a;border:1.5px solid var(--border);
+  border-radius:14px;padding:16px;margin-bottom:8px;
+  cursor:pointer;
+}
+.summary-sentence:active{border-color:var(--accent);}
+.tone-arrows{display:flex;justify-content:center;gap:12px;margin-bottom:4px;}
+.arrow{font-size:20px;}
+
+/* ── 진도 바 ── */
+.prog-track{height:4px;background:var(--bg);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--purple),var(--accent));transition:width .4s;}
+</style>
+</head>
+<body>
+<div id="app"><div class="wrap" id="root"></div></div>
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════════════
+   1. 강의 데이터
+═══════════════════════════════════════════════════════════════ */
+const CHAPTERS = [
+  // 1강
+  { id: 0, title: '6성조',    emoji: '🎵', lecture: 1 },
+  { id: 1, title: '높낮이',   emoji: '📊', lecture: 1 },
+  { id: 2, title: '남부발음', emoji: '🗺️', lecture: 1 },
+  { id: 3, title: '표기법',   emoji: '✍️', lecture: 1 },
+  { id: 4, title: '1강정리',  emoji: '✅', lecture: 1 },
+  // 2강
+  { id: 5, title: '문자표',   emoji: '🔤', lecture: 2 },
+  { id: 6, title: 'A/Ă/Â',   emoji: '🅰️', lecture: 2 },
+  { id: 7, title: 'E/Ê/I/Y', emoji: '📝', lecture: 2 },
+  { id: 8, title: 'e vs ê',  emoji: '👄', lecture: 2 },
+  { id: 9, title: '2강정리',  emoji: '✅', lecture: 2 },
+];
+
+const TONES = [
+  {
+    name: 'Dấu ngang (평성)',
+    symbol: '없음',
+    example: 'MA',
+    desc: '기본음. \'솔~\' 음으로 일정하게 내뱉기. 성조 표시 없음.',
+    pitch: 'flat',
+    color: '#60a5fa',
+    meaning: 'ma (귀신)',
+    north: 'ma', south: 'ma',
+  },
+  {
+    name: 'Dấu sắc (올림성조)',
+    symbol: '́  (sắc)',
+    example: 'MÁ',
+    desc: '낮은 곳에서 높게 올라가는 성조.',
+    pitch: 'rising',
+    color: '#4ade80',
+    meaning: 'má (엄마/뺨)',
+    north: 'má', south: 'má',
+  },
+  {
+    name: 'Dấu huyền (내림성조)',
+    symbol: '`  (huyền)',
+    example: 'MÀ',
+    desc: '높은 곳에서 낮게 내려가는 성조.',
+    pitch: 'falling',
+    color: '#f87171',
+    meaning: 'mà (하지만)',
+    north: 'mà', south: 'mà',
+  },
+  {
+    name: 'Dấu hỏi (물음성조)',
+    symbol: '?  (hỏi)',
+    example: 'MẢ',
+    desc: '내려갔다가 올라오는 성조. 물음표 느낌.',
+    pitch: 'dip',
+    color: '#fb923c',
+    meaning: 'mả (묘지)',
+    north: 'mả', south: 'mả',
+  },
+  {
+    name: 'Dấu ngã (꺾임성조)',
+    symbol: '~  (ngã)',
+    example: 'MÃ',
+    desc: '올라가다가 꺾이는 성조. ⚠️ 남부에서는 hỏi와 동일하게 발음!',
+    pitch: 'broken',
+    color: '#a259ff',
+    meaning: 'mã (말/코드)',
+    north: 'mã', south: 'mả (hỏi와 동일)',
+  },
+  {
+    name: 'Dấu nặng (무거운성조)',
+    symbol: '.  (nặng)',
+    example: 'MẠ',
+    desc: '낮고 짧게 뚝 떨어지는 성조. 가장 낮은 음.',
+    pitch: 'heavy',
+    color: '#f7c948',
+    meaning: 'mạ (모/벼)',
+    north: 'mạ', south: 'mạ',
+  },
+];
+
+const MINIMAL_PAIRS = [
+  { vi: 'ma',  ko: '귀신',    tone: 'ngang' },
+  { vi: 'má',  ko: '엄마/뺨', tone: 'sắc'  },
+  { vi: 'mà',  ko: '하지만',  tone: 'huyền'},
+  { vi: 'mả',  ko: '묘지',    tone: 'hỏi'  },
+  { vi: 'mã',  ko: '말/코드', tone: 'ngã'  },
+  { vi: 'mạ',  ko: '모/벼',   tone: 'nặng' },
+];
+
+const RULES = [
+  {
+    title: '★ 기본: 성조는 모음 위/아래에 표기',
+    desc: '성조 부호는 항상 모음에 붙어요.',
+    examples: ['Tớ', 'Là', 'Họ'],
+  },
+  {
+    title: '★ 모음이 두 개인 경우: 앞 모음에 표기',
+    desc: '단, oa, oe, uê, uơ, uy로 끝나는 경우 뒤 모음에 표기!',
+    examples: ['Nói', 'Đợi', 'Kẹo', 'Toà', 'Khoẻ'],
+  },
+  {
+    title: '★ 모음이 세 개인 경우: 가운데 모음에 표기',
+    desc: '',
+    examples: ['Hội thoại', 'Thoải mái', 'Xoài'],
+  },
+  {
+    title: '★ 끝자음(받침)이 있는 경우: 받침 앞 모음에 표기',
+    desc: '',
+    examples: ['Tiếng', 'Trường', 'Khoảng', 'Chuyện', 'Quyền'],
+  },
+];
+
+const PRACTICE_SETS = [
+  ['HA','HÁ','HÀ','HẢ','HÃ','HẠ'],
+  ['CA','CÁ','CÀ','CẢ','CÃ','CẠ'],
+  ['TA','TÁ','TÀ','TẢ','TÃ','TẠ'],
+  ['LA','LÁ','LÀ','LẢ','LÃ','LẠ'],
+];
+
+const SOUTH_NOTE = [
+  { pair: ['mả (hỏi)', 'mã (ngã)'], desc: '남부에서는 Dấu ngã = Dấu hỏi로 발음' },
+  { pair: ['ma mã → xin lỗi [씬 로이]'], desc: '북부 발음' },
+  { pair: ['mạ mã → mạnh mẽ [마잉 매/만 매]'], desc: '남부 발음' },
+  { pair: ['má mạ → bố mẹ [보 매]'], desc: '' },
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   2. APP STATE
+═══════════════════════════════════════════════════════════════ */
+const App = {
+  tab: 0,
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   3. TTS
+═══════════════════════════════════════════════════════════════ */
+const TTS = {
+  init() {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.addEventListener('voiceschanged', () => window.speechSynthesis.getVoices());
+  },
+  speak(text, rate = 0.8) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'vi-VN'; u.rate = rate;
+    const v = window.speechSynthesis.getVoices().find(v => v.lang.startsWith('vi'));
+    if (v) u.voice = v;
+    window.speechSynthesis.speak(u);
+  },
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   4. PITCH SVG 생성
+═══════════════════════════════════════════════════════════════ */
+function pitchSVG(type, color) {
+  const paths = {
+    flat:    'M 10 24 L 90 24',
+    rising:  'M 10 36 L 90 8',
+    falling: 'M 10 8  L 90 36',
+    dip:     'M 10 16 Q 50 44 90 12',
+    broken:  'M 10 32 Q 30 10 50 16 L 54 22 L 90 8',
+    heavy:   'M 10 12 L 90 38',
+  };
+  return `<svg viewBox="0 0 100 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="0" y1="8"  x2="100" y2="8"  stroke="#2a1a4a" stroke-width="0.5"/>
+    <line x1="0" y1="22" x2="100" y2="22" stroke="#2a1a4a" stroke-width="0.5"/>
+    <line x1="0" y1="36" x2="100" y2="36" stroke="#2a1a4a" stroke-width="0.5"/>
+    <path d="${paths[type]}" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="90" cy="${getEndY(type)}" r="3" fill="${color}"/>
+  </svg>`;
+}
+
+function getEndY(type) {
+  return { flat:24, rising:8, falling:36, dip:12, broken:8, heavy:38 }[type];
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   5. RENDERER
+═══════════════════════════════════════════════════════════════ */
+function render() {
+  const root = document.getElementById('root');
+  root.innerHTML = renderHeader() + renderTabs() + renderScreen();
+}
+
+function renderHeader() {
+  return `<div class="header">
+    <span class="header-flag">🇻🇳</span>
+    <span class="header-title">발음 가이드</span>
+    <span></span>
+  </div>`;
+}
+
+function renderTabs() {
+  const lec1 = CHAPTERS.filter(c => c.lecture === 1);
+  const lec2 = CHAPTERS.filter(c => c.lecture === 2);
+  return `
+    <div style="padding:6px 12px 2px;font-size:10px;color:var(--dim);font-weight:700;flex-shrink:0;">1강 · 성조</div>
+    <div class="tabs" style="margin-bottom:0;">${lec1.map(c =>
+      `<button class="tab${App.tab === c.id ? ' on' : ''}" onclick="App.tab=${c.id};render()">
+        ${c.emoji} ${c.title}
+      </button>`
+    ).join('')}</div>
+    <div style="padding:6px 12px 2px;font-size:10px;color:var(--dim);font-weight:700;flex-shrink:0;">2강 · 모음</div>
+    <div class="tabs">${lec2.map(c =>
+      `<button class="tab${App.tab === c.id ? ' on' : ''}" onclick="App.tab=${c.id};render()">
+        ${c.emoji} ${c.title}
+      </button>`
+    ).join('')}</div>`;
+}
+
+function renderScreen() {
+  switch (App.tab) {
+    case 0: return renderToneBasics();
+    case 1: return renderTonePitch();
+    case 2: return renderSouthPronun();
+    case 3: return renderNotation();
+    case 4: return renderPractice();
+    case 5: return render2CharTable();
+    case 6: return render2VowelA();
+    case 7: return render2VowelEI();
+    case 8: return render2EVsE();
+    case 9: return render2Summary();
+  }
+}
+
+/* ─── Chapter 0: 6성조 기초 ──────────────────────────────── */
+function renderToneBasics() {
+  return `<div style="flex:1;overflow-y:auto;padding:16px 16px;display:flex;flex-direction:column;gap:12px;animation:fadeUp .3s ease;">
+    <div class="card">
+      <div class="section-title">🎵 베트남어 6성조</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:8px;">
+        • 성조 = Dấu (저우) 또는 Thanh điệu (타잉 디에우)<br>
+        • 총 6개. <span style="color:var(--accent);font-weight:700">성조가 없는 것도 성조에 포함!</span><br>
+        • 기본음: <span style="color:var(--accent)">'솔~'</span> 음으로 일정하게 내뱉기
+      </div>
+      <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+    </div>
+
+    ${TONES.map((t, i) => `
+    <div class="tone-card" id="tone-${i}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="tone-name" style="color:${t.color}">${t.name}</div>
+          <div class="tone-symbol">부호: ${t.symbol}</div>
+        </div>
+        <div style="font-family:'Boogaloo',cursive;font-size:36px;color:${t.color}">${t.example}</div>
+      </div>
+      <div class="tone-pitch">${pitchSVG(t.pitch, t.color)}</div>
+      <div class="tone-desc">${t.desc}</div>
+      <div style="font-size:12px;color:var(--muted);">예시: <span style="font-family:monospace;color:${t.color}">${t.meaning}</span></div>
+      <button class="tts-btn" onclick="TTS.speak('${t.north}')">🔊 듣기</button>
+    </div>`).join('')}
+  </div>`;
+}
+
+/* ─── Chapter 1: 성조 높낮이 비교 ───────────────────────── */
+function renderTonePitch() {
+  const order = [
+    { name:'Dấu sắc',  color:'#4ade80', pos:0 },
+    { name:'Dấu ngã',  color:'#a259ff', pos:1 },
+    { name:'Dấu ngang',color:'#60a5fa', pos:2 },
+    { name:'Dấu hỏi',  color:'#fb923c', pos:3 },
+    { name:'Dấu huyền',color:'#f87171', pos:4 },
+    { name:'Dấu nặng', color:'#f7c948', pos:5 },
+  ];
+
+  return `<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;animation:fadeUp .3s ease;">
+    <div class="card">
+      <div class="section-title">📊 성조 높낮이 순서</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">위에서 아래로 → 높은 음에서 낮은 음 순서</div>
+      <div style="display:flex;gap:10px;">
+        <div style="display:flex;flex-direction:column;justify-content:space-between;height:200px;padding:4px 0;">
+          ${order.map(t => `<div style="font-size:12px;font-weight:700;color:${t.color}">${t.name}</div>`).join('')}
+        </div>
+        <div style="flex:1;position:relative;height:200px;background:#0d0d1a;border-radius:10px;border:1px solid var(--border);">
+          <div style="position:absolute;left:0;right:0;top:0;bottom:0;display:flex;flex-direction:column;justify-content:space-between;padding:8px 0;">
+            ${order.map(t => `<div style="height:2px;background:${t.color};opacity:0.3;margin:0 8px;border-radius:99px;"></div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">🎯 성조별 음정 그래프</div>
+      ${TONES.map(t => `
+      <div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="font-size:13px;font-weight:700;color:${t.color}">${t.name}</span>
+          <button class="tts-btn" onclick="TTS.speak('${t.north}')" style="padding:4px 10px;font-size:12px;">🔊</button>
+        </div>
+        <div class="tone-pitch">${pitchSVG(t.pitch, t.color)}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ─── Chapter 2: 남부 발음 차이 ──────────────────────────── */
+function renderSouthPronun() {
+  return `<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;animation:fadeUp .3s ease;">
+    <div class="card">
+      <div class="section-title">🗺️ 남부 발음 특징</div>
+      <div style="background:#2a0a0a;border:1.5px solid #6e2a2a;border-radius:12px;padding:12px;margin-bottom:12px;">
+        <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:6px;">⚠️ 핵심 차이</div>
+        <div style="font-size:13px;color:#f0e6ff;line-height:1.8;">
+          남부에서는 <span style="color:#a259ff;font-weight:700">Dấu ngã (~)</span>를<br>
+          <span style="color:#fb923c;font-weight:700">Dấu hỏi (?)</span>와 동일하게 발음해요!
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center;justify-content:center;padding:16px;background:#0d0d1a;border-radius:12px;margin-bottom:12px;">
+        <div style="text-align:center;">
+          <div style="font-family:monospace;font-size:36px;font-weight:700;color:#fb923c;">MẢ</div>
+          <div style="font-size:11px;color:var(--muted);">Dấu hỏi</div>
+        </div>
+        <div style="font-size:24px;color:var(--accent);">=</div>
+        <div style="text-align:center;">
+          <div style="font-family:monospace;font-size:36px;font-weight:700;color:#a259ff;">MÃ</div>
+          <div style="font-size:11px;color:var(--muted);">Dấu ngã</div>
+          <div style="font-size:10px;color:var(--dim);">(남부에서)</div>
+        </div>
+      </div>
+
+      <div style="font-size:12px;color:var(--muted);">남부 지역: 호치민, 메콩델타 등</div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">🔊 성조 조합 예시</div>
+      <div style="font-size:11px;color:var(--dim);margin-bottom:10px;">탭하면 TTS로 들을 수 있어요</div>
+
+      ${[
+        { vi:'xin lỗi', ko:'미안합니다', combo:'ma mã', region:'북부' },
+        { vi:'mạnh mẽ', ko:'건강하다', combo:'mạ mã', region:'북부' },
+        { vi:'bố mẹ',  ko:'부모님',   combo:'má mạ', region:'북부/남부' },
+      ].map(item => `
+      <div onclick="TTS.speak('${item.vi}')"
+        style="background:#0d0d1a;border:1.5px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:11px;color:var(--dim);margin-bottom:3px;">성조 조합: ${item.combo}</div>
+          <div style="font-family:monospace;font-size:20px;font-weight:700;color:var(--accent);">${item.vi}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">${item.ko}</div>
+        </div>
+        <span style="font-size:20px;opacity:.6">🔊</span>
+      </div>`).join('')}
+    </div>
+
+
+  </div>`;
+}
+
+/* ─── Chapter 3: 성조 표기법 ─────────────────────────────── */
+function renderNotation() {
+  return `<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;animation:fadeUp .3s ease;">
+    <div class="card">
+      <div class="section-title">✍️ 성조 표기 위치 규칙</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">성조 부호는 어디에 붙이나요?</div>
+      ${RULES.map(r => `
+      <div class="rule-card">
+        <div class="rule-title">${r.title}</div>
+        ${r.desc ? `<div class="rule-desc">${r.desc}</div>` : ''}
+        <div class="rule-examples">
+          ${r.examples.map(e => `<span class="rule-ex" onclick="TTS.speak('${e}')">${e}</span>`).join('')}
+        </div>
+      </div>`).join('')}
+    </div>
+
+    <div class="card">
+      <div class="section-title">🎯 최소 대립쌍 (Minimal Pairs)</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">같은 자음, 성조만 다른 단어들 — 탭하면 발음!</div>
+      <div class="minimal-pair">
+        ${MINIMAL_PAIRS.map(p => `
+        <div class="mp-card" onclick="TTS.speak('${p.vi}')">
+          <div class="mp-vi">${p.vi}</div>
+          <div class="mp-ko">${p.ko}</div>
+          <div class="mp-tone">${p.tone}</div>
+        </div>`).join('')}
+      </div>
+      <button onclick="playAll()" style="width:100%;margin-top:10px;padding:10px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;">
+        🔊 전부 순서대로 듣기
+      </button>
+    </div>
+  </div>`;
+}
+
+/* ─── Chapter 4: 정리 & 연습 ─────────────────────────────── */
+function renderPractice() {
+  return `<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;animation:fadeUp .3s ease;">
+    <div class="card">
+      <div class="section-title">✅ 오늘 배운 내용 정리</div>
+
+      <div style="margin-bottom:12px;">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">성조 방향 한눈에 보기</div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;">
+          ${TONES.map(t => `
+          <div style="text-align:center;background:#0d0d1a;border:1px solid var(--border);border-radius:10px;padding:6px 3px;">
+            <div style="height:28px;">${pitchSVG(t.pitch, t.color)}</div>
+            <div style="font-family:monospace;font-size:13px;color:${t.color};margin-top:3px;">${t.example}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+
+      <div style="font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:700;">정리 문장: Tạm biệt các bạn!</div>
+      <div class="summary-sentence" onclick="TTS.speak('Tạm biệt các bạn')">
+        Tạm biệt các bạn!
+      </div>
+      <div style="display:flex;justify-content:center;gap:12px;font-size:12px;color:var(--muted);margin-bottom:4px;">
+        <span>↘ 땀</span>
+        <span>↘ 비엗(빅)</span>
+        <span>↗ 깍</span>
+        <span>↘ 반(방)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">📝 성조별 연습</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">탭하면 발음 들을 수 있어요</div>
+      ${PRACTICE_SETS.map(row => `
+      <div class="practice-grid" style="margin-bottom:8px;">
+        ${row.map(cell => `
+        <div class="practice-cell" onclick="TTS.speak('${cell.toLowerCase()}')">
+          <div class="practice-vi">${cell}</div>
+        </div>`).join('')}
+      </div>`).join('')}
+    </div>
+
+    <div class="card">
+      <div class="section-title">🗺️ 북부 vs 남부 발음</div>
+      ${[
+        { combo:'ma mã', north:'xin lỗi [씬 로이]',       south:'동일' },
+        { combo:'mạ mã', north:'mạnh mẽ [마잉 매]',       south:'만 매 (ngã→hỏi)' },
+        { combo:'má mạ', north:'bố mẹ [보 매]',            south:'동일' },
+      ].map(item => `
+      <div style="background:#0d0d1a;border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:8px;">
+        <div style="font-size:11px;color:var(--dim);margin-bottom:4px;">성조조합: ${item.combo}</div>
+        <div style="display:flex;gap:8px;">
+          <div class="badge-north">🔵 북부: ${item.north}</div>
+          <div class="badge-south">🔴 남부: ${item.south}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+
+    <div style="text-align:center;padding:12px;font-size:12px;color:var(--dim);">
+      1강 완료 🎉 다음 강의 내용을 추가해보세요!
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   6. ACTIONS
+═══════════════════════════════════════════════════════════════ */
+function playAll() {
+  let i = 0;
+  const pairs = MINIMAL_PAIRS;
+  function next() {
+    if (i >= pairs.length) return;
+    TTS.speak(pairs[i].vi);
+    i++;
+    setTimeout(next, 1200);
+  }
+  next();
+}
+
+function playAllSentences() {
+  const sentences = ['Bạn ơi','Ăn cơm','Bận việc','Nhớ em','Thế à','Xin lỗi','Đọc kỹ','Đi ăn'];
+  let i = 0;
+  function next() {
+    if (i >= sentences.length) return;
+    TTS.speak(sentences[i]);
+    i++;
+    setTimeout(next, 1500);
+  }
+  next();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   7. 2강 SCREENS
+═══════════════════════════════════════════════════════════════ */
+
+/* ─── 2강 Ch0: 전체 문자표 ───────────────────────────────── */
+function render2CharTable() {
+  const allChars = ['A','Ă','Â','B','C','D','Đ','E','Ê','G','H','I','K','L','M','N','O','Ô','Ơ','P','Q','R','S','T','U','Ư','V','X','Y'];
+  const special = ['Ă','Â','Đ','Ê','Ô','Ơ','Ư'];
+  const todayVowels = [
+    ['A','Ă','Â'],
+    ['E','Ê',''],
+    ['I','Y',''],
+    ['O','Ô','Ơ'],
+    ['U','Ư',''],
+  ];
+
+  return `<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;animation:fadeUp .3s ease;">
+    <div class="card">
+      <div class="section-title">🔤 베트남어 전체 문자</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">총 12개 모음, 17개 자음으로 구성</div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:10px;">
+        ${allChars.map(c => `
+        <div style="text-align:center;padding:8px 4px;border-radius:8px;background:#0d0d1a;border:1px solid ${special.includes(c)?'var(--accent)':'var(--border)'};">
+          <span style="font-size:16px;font-weight:700;color:${special.includes(c)?'var(--accent)':'#f0e6ff'};">${c}</span>
+        </div>`).join('')}
+      </div>
+      <div style="font-size:11px;color:var(--accent);background:#1a1200;border:1px solid #6e5000;border-radius:10px;padding:8px 10px;">
+        ★ F, J, W, Z 대신 <span style="font-weight:700">Ă, Â, Đ, Ê, Ô, Ơ, Ư</span> 추가
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">📋 오늘의 문자 (모음)</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+        ${todayVowels.map(row => row.map(c => `
+        <div style="text-align:center;padding:12px 4px;border-radius:10px;background:#0d0d1a;border:1.5px solid ${c?'var(--border)':'transparent'};">
+          ${c ? `<span style="font-size:22px;font-weight:700;color:${['Ă','Â','Ê','Ô','Ơ','Ư','Y'].includes(c)?'var(--accent)':'#f0e6ff'};">${c}</span>` : ''}
+        </div>`).join('')).join('')}
+      </div>
+      <div style="font-size:11px;color:var(--accent);margin-top:8px;">★ 노란색 = 베트남어 특수 문자</div>
+    </div>
+  </div>`;
+}
+
+/* ─── 2강 Ch1: A / Ă / Â 모음 ───────────────────────────── */
+function render2VowelA() {
+  const vowels = [
+    {
+      char:'A', label:'a', sound:'아',
+      desc:'입을 크게 벌려 발음하는 기본 [아] 소리',
+      examples:[
+        { vi:'anh', ko:'형, 오빠', pron:'아잉/안' },
+        { vi:'bạn', ko:'친구, 너', pron:'반/방' },
+        { vi:'là',  ko:'~이다',   pron:'라' },
+      ]
+    },
+    {
+      char:'Ă', label:'ă', sound:'아↗ (짧게)',
+      desc:'짧고 위로 올라가는 [아] 소리. 입을 살짝만 벌리기',
+      examples:[
+        { vi:'ăn',   ko:'먹다',         pron:'안/앙' },
+        { vi:'tắc',  ko:'막히다',        pron:'딱' },
+        { vi:'bằng', ko:'~로(수단,방법)', pron:'방' },
+      ]
+    },
+    {
+      char:'Â', label:'â', sound:'어↗ (짧게)',
+      desc:'짧고 올라가는 [어] 소리. 입을 조금만 벌리기',
+      examples:[
+        { vi:'bận',  ko:'바쁜',    pron:'번/벙' },
+        { vi:'vâng', ko:'네(대답)', pron:'벙/영' },
+        { vi:'sân',  ko:'운동장',  pron:'썬/썽' },
+      ]
+    },
+  ];
+
+  return `<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;animation:fadeUp .3s ease;">
+    ${vowels.map(v => `
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+        <div style="width:56px;height:56px;border:2px solid var(--accent);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0d0d1a;overflow:hidden;flex-shrink:0;">
+          <span style="font-size:24px;font-weight:700;color:var(--accent);">${v.char}</span>
+          <span style="font-size:8px;color:var(--dim);text-align:center;padding:0 2px;">${v.label}</span>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#f0e6ff;">[${v.sound}]</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">${v.desc}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        ${v.examples.map(e => `
+        <div onclick="TTS.speak('${e.vi}')" style="display:flex;justify-content:space-between;align-items:center;background:#0d0d1a;border:1px solid var(--border);border-radius:10px;padding:8px 12px;cursor:pointer;">
+          <div>
+            <span style="font-family:monospace;font-size:18px;font-weight:700;color:var(--accent);">${e.vi}</span>
+            <span style="font-size:12px;color:var(--muted);margin-left:8px;">${e.ko}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11px;color:var(--dim);">[${e.pron}]</span>
+            <span style="opacity:.5">🔊</span>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+/* ─── 2강 Ch2: E / Ê / I / Y 모음 ──────────────────────── */
+function render2VowelEI() {
+  const vowels = [
+    {
+      char:'E', label:'e', sound:'애',
+      desc:'입으로 내는 맑은 [애] 소리. 입을 가로로 길게 벌리기',
+      examples:[
+        { vi:'đẹp', ko:'예쁜',     pron:'댑' },
+        { vi:'em',  ko:'동생, 너', pron:'앰' },
+        { vi:'xem', ko:'보다',     pron:'쌤' },
+      ]
+    },
+    {
+      char:'Ê', label:'ê', sound:'에',
+      desc:'목을 벌려 소리 내는 [에] 소리. 입을 세로로 적당히 벌리기',
+      examples:[
+        { vi:'thế', ko:'그러면',        pron:'테' },
+        { vi:'tên', ko:'이름',          pron:'뗀' },
+        { vi:'về',  ko:'돌아가다/오다', pron:'베/예' },
+      ]
+    },
+    {
+      char:'I', label:'i ngắn', sound:'이 (응안)',
+      desc:'짧은 [이] 소리',
+      examples:[
+        { vi:'xin',    ko:'청하다', pron:'씬' },
+        { vi:'tắc-xi', ko:'택시',   pron:'딱씨' },
+        { vi:'đi',     ko:'가다',   pron:'디' },
+      ]
+    },
+    {
+      char:'Y', label:'y dài', sound:'이 (자이)',
+      desc:'긴 [이] 소리. I와 발음 같지만 주로 단어 앞에 위치',
+      examples:[
+        { vi:'kỹ',     ko:'꼼꼼히', pron:'끼' },
+        { vi:'ý kiến', ko:'의견',   pron:'이 끼엔/이 낑' },
+        { vi:'y tá',   ko:'간호사', pron:'이 따' },
+      ]
+    },
+  ];
+
+  return `<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;animation:fadeUp .3s ease;">
+    ${vowels.map(v => `
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+        <div style="width:56px;height:56px;border:2px solid var(--accent);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0d0d1a;overflow:hidden;flex-shrink:0;">
+          <span style="font-size:24px;font-weight:700;color:var(--accent);">${v.char}</span>
+          <span style="font-size:8px;color:var(--dim);text-align:center;line-height:1.2;padding:0 2px;">${v.label}</span>
+        </div>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:#f0e6ff;">[${v.sound}]</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">${v.desc}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        ${v.examples.map(e => `
+        <div onclick="TTS.speak('${e.vi}')" style="display:flex;justify-content:space-between;align-items:center;background:#0d0d1a;border:1px solid var(--border);border-radius:10px;padding:8px 12px;cursor:pointer;">
+          <div>
+            <span style="font-family:monospace;font-size:18px;font-weight:700;color:var(--accent);">${e.vi}</span>
+            <span style="font-size:12px;color:var(--muted);margin-left:8px;">${e.ko}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11px;color:var(--dim);">[${e.pron}]</span>
+            <span style="opacity:.5">🔊</span>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+/* ─── 2강 Ch3: e vs ê 발음 고민 해결 ────────────────────── */
+function render2EVsE() {
+  return `<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;animation:fadeUp .3s ease;">
+    <div class="card">
+      <div class="section-title">👄 e vs ê 발음 구별</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div style="background:#0d0d1a;border:2px solid var(--accent);border-radius:14px;padding:14px;text-align:center;">
+          <div style="font-size:36px;font-weight:700;color:var(--accent);font-family:monospace;">e</div>
+          <div style="font-size:13px;font-weight:700;color:#f0e6ff;margin-top:6px;">[애]</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;">
+            ✓ 입으로 내는 맑은 '애' 소리<br>
+            ✓ 입을 가로로 길~게 벌리기
+          </div>
+        </div>
+        <div style="background:#0d0d1a;border:2px solid var(--purple);border-radius:14px;padding:14px;text-align:center;">
+          <div style="font-size:36px;font-weight:700;color:var(--purple);font-family:monospace;">ê</div>
+          <div style="font-size:13px;font-weight:700;color:#f0e6ff;margin-top:6px;">[에]</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6;">
+            ✓ 목을 벌려 소리 내는 '에' 소리<br>
+            ✓ 입을 세로로 적당히 벌리기
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:700;">단어로 비교하기 — 탭하면 발음!</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        ${[
+          { vi:'vẽ',  ko:'그리다',    pron:'배/애', type:'e' },
+          { vi:'bên', ko:'쪽, 편',    pron:'벤',    type:'ê' },
+          { vi:'kem', ko:'아이스크림', pron:'깸',    type:'e' },
+          { vi:'để',  ko:'~위해',     pron:'데',    type:'ê' },
+        ].map(w => `
+        <div onclick="TTS.speak('${w.vi}')"
+          style="background:#0d0d1a;border:1.5px solid ${w.type==='e'?'var(--accent)':'var(--purple)'};border-radius:12px;padding:10px;cursor:pointer;text-align:center;">
+          <div style="font-family:monospace;font-size:20px;font-weight:700;color:${w.type==='e'?'var(--accent)':'var(--purple)'};">${w.vi}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">${w.ko}</div>
+          <div style="font-size:10px;color:var(--dim);">[${w.pron}]</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">📖 연습 문장</div>
+      ${[
+        { vi:'Chị thích màu đen.', ko:'언니는 검은색을 좋아해요.', pron:'찌 틱 마우 댄/찌 틸 마우 댄' },
+        { vi:'Anh đến để ăn.',     ko:'형은 먹으러 왔어요.',       pron:'아잉 덴 데 안/안 덴 데 앙' },
+      ].map(s => `
+      <div onclick="TTS.speak('${s.vi}')"
+        style="background:#0d0d1a;border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-family:monospace;font-size:16px;font-weight:700;color:var(--accent);margin-bottom:4px;">${s.vi}</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:3px;">${s.ko}</div>
+          <div style="font-size:11px;color:var(--dim);">[${s.pron}]</div>
+        </div>
+        <span style="font-size:20px;opacity:.5;flex-shrink:0;">🔊</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ─── 2강 Ch4: 정리 & 연습 문장 ─────────────────────────── */
+function render2Summary() {
+  const sentences = [
+    { vi:'Bạn ơi.',   ko:'친구야/저기요.',  pron:'반 어이/방 어이' },
+    { vi:'Ăn cơm.',   ko:'밥을 먹다.',       pron:'안 껌/앙 껌' },
+    { vi:'Bận việc.', ko:'일이 바쁘다.',     pron:'번 비엑/벙 이옉' },
+    { vi:'Nhớ em.',   ko:'네가 그리워.',     pron:'녀 앰' },
+    { vi:'Thế à!',    ko:'그렇구나!',        pron:'테 아' },
+    { vi:'Xin lỗi.',  ko:'미안해.',          pron:'씬 로이' },
+    { vi:'Đọc kỹ.',   ko:'꼼꼼히 읽다.',    pron:'덥 끼' },
+    { vi:'Đi ăn.',    ko:'먹으러 가다.',     pron:'디 안/디 앙' },
+  ];
+
+  return `<div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;animation:fadeUp .3s ease;">
+    <div class="card">
+      <div class="section-title">✅ 2강 정리</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;">
+        ${[
+          {char:'A',  sound:'아'},
+          {char:'Ă',  sound:'아↗'},
+          {char:'Â',  sound:'어↗'},
+          {char:'E',  sound:'애'},
+          {char:'Ê',  sound:'에'},
+          {char:'I',  sound:'이(짧)'},
+          {char:'Y',  sound:'이(길)'},
+        ].map(v => `
+        <div style="text-align:center;background:#0d0d1a;border:1.5px solid var(--border);border-radius:10px;padding:8px;">
+          <div style="font-size:22px;font-weight:700;color:var(--accent);">${v.char}</div>
+          <div style="font-size:11px;color:var(--muted);">${v.sound}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">📝 연습 문장</div>
+      <div style="font-size:11px;color:var(--dim);margin-bottom:8px;">탭하면 TTS로 들을 수 있어요</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        ${sentences.map(s => `
+        <div onclick="TTS.speak('${s.vi}')"
+          style="background:#0d0d1a;border:1px solid var(--border);border-radius:12px;padding:10px;cursor:pointer;">
+          <div style="font-family:monospace;font-size:15px;font-weight:700;color:var(--accent);">${s.vi}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">${s.ko}</div>
+          <div style="font-size:10px;color:var(--dim);">[${s.pron}]</div>
+        </div>`).join('')}
+      </div>
+      <button onclick="playAllSentences()" style="width:100%;margin-top:10px;padding:10px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);font-size:13px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;">
+        🔊 전부 순서대로 듣기
+      </button>
+    </div>
+
+    <div class="card" style="border-color:#6e5000;background:#1a1200;">
+      <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px;">📚 오늘의 숙제</div>
+      <div onclick="TTS.speak('Bạn ơi')" style="cursor:pointer;">
+        <div style="font-family:monospace;font-size:24px;font-weight:700;color:var(--accent);">B_n ơi~</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;">친구야/저기요~ [반 어이/방 어이]</div>
+        <div style="font-size:11px;color:var(--dim);margin-top:2px;">빈칸에 들어갈 글자는? (정답: a)</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:12px;font-size:12px;color:var(--dim);">
+      2강 완료 🎉 다음 강의 내용을 추가해보세요!
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   8. BOOT
+═══════════════════════════════════════════════════════════════ */
+TTS.init();
+render();
+</script>
+</body>
+</html>

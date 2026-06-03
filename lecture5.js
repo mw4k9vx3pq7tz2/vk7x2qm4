@@ -324,9 +324,9 @@ function renderL5C5() {
 
   const homework = [
     {vi:'ăn rồi',   ko:'먹었어.',           north:'안 조이', south:'앙 로이'},
-    {vi:'xinh quá', ko:'너무 이쁘다!',       north:'씽 꾸아', south:'씬/쑨 우아'},
+    {vi:'xinh quá', ko:'너무 이쁘다!',       north:'씽 꾸아', south:'씬/쓴 우아'},
     {vi:'bún riêu',  ko:'분지에우(쌀국수)', north:'분 지에우', south:'붕 리우'},
-    {vi:'bán hết',  ko:'(전부) 다 팔다.',    north:'반 헨', south:'방 헥'},
+    {vi:'bán hết',  ko:'(전부) 다 팔다.',    north:'반 헫', south:'방 헥'},
   ];
 
   return `<div class="screen-scroll">

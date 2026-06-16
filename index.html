@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="🇻🇳">
+<meta name="theme-color" content="#262624">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>🇻🇳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#262624; --bg-deep:#1f1e1d; --surface:#30302e; --surface-2:#3a3937;
+  --border:#41403c; --hairline:#383734;
+  --accent:#d97757; --accent-soft:rgba(217,119,87,.14); --accent-text:#1f1e1d;
+  --text:#f5f4ef; --muted:#b8b5ad; --dim:#83827c;
+  --green:#9db380; --green-bg:rgba(157,179,128,.12);
+  --red:#e0635c; --red-bg:rgba(224,99,92,.10);
+  --gold:#d4a27f;
+  --serif:'Lora',serif; --sans:'Noto Sans KR',sans-serif;
+}
+html,body{height:100%;background:var(--bg);overscroll-behavior:none;-webkit-text-size-adjust:none;}
+body{font-family:var(--sans);color:var(--text);}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.18s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+#app{min-height:100dvh;display:flex;flex-direction:column;align-items:center;}
+.wrap{width:100%;max-width:480px;display:flex;flex-direction:column;min-height:100dvh;}
+.header{padding:14px 20px 10px;padding-top:calc(14px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.brand{font-family:var(--serif);font-size:17px;font-weight:600;}
+.streak{background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:5px 12px;font-size:13px;font-weight:700;color:var(--gold);}
+.back-btn{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:4px 8px 4px 0;line-height:1;}
+.card{background:var(--surface);border:1px solid var(--hairline);border-radius:18px;padding:14px 16px;}
+.eyebrow{font-size:11px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;}
+.prog-track{height:5px;background:var(--surface-2);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:99px;background:var(--accent);transition:width .4s;}
+.badge{font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 10px;}
+.badge-err{font-size:11px;color:var(--red);background:var(--red-bg);border:1px solid var(--red);border-radius:20px;padding:3px 10px;}
+
+/* ─── 홈 ─── */
+.ring-zone{display:flex;justify-content:center;margin:8px 0 14px;}
+.ring-wrap{position:relative;width:188px;height:188px;}
+.ring-wrap svg{transform:rotate(-90deg);}
+.ring-bg{fill:none;stroke:var(--surface-2);stroke-width:9;}
+.ring-fg{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.3,0,.2,1);}
+.ring-core{position:absolute;inset:14px;border-radius:50%;background:var(--surface);border:1px solid var(--hairline);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
+.ring-core .big{font-family:var(--serif);font-size:34px;font-weight:600;}
+.ring-core .lab{font-size:12px;color:var(--muted);}
+.counts{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.cnt{background:var(--surface);border:1px solid var(--hairline);border-radius:99px;padding:6px 13px;font-size:12px;color:var(--muted);}
+.cnt b{font-variant-numeric:tabular-nums;}
+.launch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.launch button{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:15px 13px;
+  text-align:left;cursor:pointer;font-family:var(--sans);color:var(--text);transition:transform .1s,border-color .15s;}
+.launch button:active{transform:scale(.97);border-color:var(--accent);}
+.launch button:disabled{opacity:.45;}
+.launch .ic{font-size:21px;}
+.launch .tt{font-size:14px;font-weight:700;margin-top:7px;}
+
+/* ─── 퀴즈 ─── */
+.q-stage{font-family:var(--serif);font-size:34px;font-weight:600;line-height:1.3;text-align:center;}
+.big-spk{width:110px;height:110px;border-radius:50%;border:1.6px solid var(--border);background:var(--surface);
+  font-size:40px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;outline:none;}
+.big-spk.pulsing{border-color:var(--accent);background:var(--accent-soft);transform:scale(1.05);box-shadow:0 0 26px rgba(217,119,87,.35);}
+.slow-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:var(--sans);}
+.input-area{flex-shrink:0;padding:10px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--hairline);background:var(--bg);display:flex;flex-direction:column;gap:8px;}
+.answer-input{width:100%;padding:13px 16px;border-radius:14px;border:1.6px solid var(--border);background:var(--bg-deep);color:var(--text);font-size:20px;text-align:center;outline:none;font-family:var(--sans);transition:border-color .2s;}
+.answer-input:focus{border-color:var(--accent);}
+.answer-input.ok{border-color:var(--green);color:var(--green);}
+.answer-input.fail{border-color:var(--red);color:var(--red);}
+.answer-input.shaking{animation:shake .35s ease;}
+.confirm-btn{width:100%;padding:14px;border-radius:14px;border:none;background:var(--accent);color:var(--accent-text);font-size:16px;font-weight:700;font-family:var(--sans);cursor:pointer;}
+.feedback{width:100%;padding:14px 16px;border-radius:18px;text-align:center;animation:popIn .22s ease;}
+.feedback.ok{border:1px solid var(--green);background:var(--green-bg);}
+.feedback.fail{border:1px solid var(--red);background:var(--red-bg);}
+.fb-word{font-family:var(--serif);font-size:25px;font-weight:600;margin-top:5px;}
+.btn-again{padding:13px;border-radius:14px;border:1.4px solid var(--red);background:var(--red-bg);color:var(--red);font-size:14px;font-weight:700;font-family:var(--sans);cursor:pointer;}
+.btn-edit{padding:13px 16px;border-radius:14px;border:1px solid var(--border);background:var(--surface);font-size:17px;cursor:pointer;}
+.btn-hard{padding:13px;border-radius:14px;border:1.4px solid var(--gold);background:var(--surface);color:var(--gold);font-size:14px;font-weight:700;font-family:var(--sans);cursor:pointer;text-align:center;}
+.btn-good{padding:13px;border-radius:14px;border:1.4px solid var(--green);background:var(--green-bg);color:var(--green);font-size:14px;font-weight:700;font-family:var(--sans);cursor:pointer;text-align:center;}
+.btn-sub{display:block;font-weight:400;font-size:10px;opacity:.7;margin-top:2px;}
+.btn-accent{width:100%;padding:15px;border-radius:16px;border:none;background:var(--accent);color:var(--accent-text);font-size:16px;font-weight:700;font-family:var(--sans);cursor:pointer;}
+
+/* ─── 플래시 ─── */
+.flash-scene{perspective:900px;width:100%;height:226px;cursor:pointer;}
+.flash-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+.flash-inner.flipped{transform:rotateY(180deg);}
+.flash-face{position:absolute;inset:0;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;-webkit-backface-visibility:hidden;backface-visibility:hidden;padding:24px;border:1px solid var(--hairline);}
+.flash-front{background:linear-gradient(150deg,var(--surface),var(--bg-deep));transform:rotateY(0deg);}
+.flash-back{background:linear-gradient(150deg,var(--green-bg),var(--bg-deep));border-color:var(--green);transform:rotateY(180deg);}
+/* 상태당 한 면만 존재 — 초기 합성/뷰전환 평탄화 시 앞뒷면 겹침(z-fighting) 원천 차단 */
+.flash-inner:not(.flipped) .flash-back{visibility:hidden;}
+.flash-inner.flipped .flash-front{visibility:hidden;}
+.fl-word{font-family:var(--serif);font-size:42px;font-weight:600;font-style:italic;text-align:center;}
+.fl-nav-btn{padding:13px;border-radius:14px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:15px;font-weight:700;font-family:var(--sans);cursor:pointer;}
+.fl-nav-btn:disabled{color:var(--dim);}
+
+/* ─── 오답노트 ─── */
+.w-item{background:var(--surface);border:1px solid var(--hairline);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;}
+.w-vi{font-family:var(--serif);font-size:18px;font-weight:600;font-style:italic;}
+
+/* ─── 통계/백업 ─── */
+.chart-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.chart-bars{display:flex;align-items:flex-end;gap:4px;height:100px;}
+.bar-col{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.bar-inner{width:100%;display:flex;flex-direction:column;justify-content:flex-end;height:90px;gap:1px;}
+.bar-label{font-size:8px;color:var(--dim);transform:rotate(-30deg);margin-top:2px;white-space:nowrap;}
+.bar-label.today{color:var(--accent);font-weight:700;}
+.range-btn{padding:3px 9px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:11px;cursor:pointer;font-family:var(--sans);}
+.range-btn.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);}
+.backup-card{background:var(--surface);border:1px solid var(--hairline);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+.backup-btn{flex:1;padding:10px;border-radius:12px;border:1px solid var(--border);background:var(--bg-deep);color:var(--text);font-size:13px;font-family:var(--sans);cursor:pointer;}
+
+/* ─── 단어장 편집 ─── */
+.ed-input{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg-deep);color:var(--text);font-size:14px;font-family:var(--sans);outline:none;}
+.ed-input:focus{border-color:var(--accent);}
+.ed-ico{background:none;border:none;font-size:15px;cursor:pointer;padding:4px 6px;flex-shrink:0;}
+.ed-row{display:flex;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px solid var(--hairline);}
+.ed-mini{padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg-deep);color:var(--text);font-size:12px;font-family:var(--sans);cursor:pointer;}
+.ed-mini.acc{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+
+/* ─── 하단 탭바 ─── */
+.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;
+  background:rgba(38,38,36,.92); /* color-mix 미지원(iOS 16.1↓) 폴백 */
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--hairline);display:flex;padding:6px 8px calc(8px + env(safe-area-inset-bottom));z-index:10;}
+.tb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;
+  padding:6px 0;color:var(--dim);font-family:var(--sans);font-size:10px;cursor:pointer;transition:color .15s;}
+.tb .ic{font-size:19px;line-height:1;filter:grayscale(1) opacity(.55);transition:filter .15s;}
+.tb.on{color:var(--accent);font-weight:700;}
+.tb.on .ic{filter:none;}
+
+/* ⚡ 스피드런 게임 (sr- 접두어: 앱 클래스와 충돌 방지) */
+.sr-wrap{position:relative;flex:1;display:flex;flex-direction:column;min-height:0;
+  padding:calc(14px + env(safe-area-inset-top)) 18px calc(16px + env(safe-area-inset-bottom));}
+.sr-top{display:flex;align-items:center;height:32px;flex-shrink:0;}
+.sr-back{font-size:15px;color:var(--muted);background:none;border:none;cursor:pointer;padding:4px 6px;font-family:var(--sans);}
+.sr-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;}
+.sr-title{font-family:var(--serif);font-weight:600;font-size:40px;letter-spacing:-.01em;}
+.sr-title .b{color:var(--accent);}
+.sr-sub{color:var(--muted);font-size:14px;line-height:1.65;max-width:300px;}
+.sr-sub b{color:var(--accent);font-weight:700;}
+.sr-best{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--hairline);
+  padding:10px 18px;border-radius:99px;font-size:14px;color:var(--text);}
+.sr-best b{color:var(--gold);font-size:17px;font-weight:700;}
+.sr-btn{background:var(--accent);color:var(--accent-text);font-weight:700;font-size:18px;
+  padding:16px 48px;border-radius:16px;border:none;cursor:pointer;font-family:var(--sans);box-shadow:0 6px 16px rgba(217,119,87,.28);}
+.sr-btn:active{transform:scale(.97);}
+.sr-ghost{background:var(--surface);border:1px solid var(--border);color:var(--text);
+  font-weight:600;font-size:15px;padding:13px 28px;border-radius:14px;cursor:pointer;font-family:var(--sans);}
+.sr-ghost:active{transform:scale(.97);}
+.sr-hud{display:flex;align-items:center;justify-content:space-between;height:30px;flex-shrink:0;}
+.sr-hearts{font-size:19px;letter-spacing:2px;}
+.sr-lost{opacity:.22;}
+.sr-hud-r{display:flex;align-items:center;gap:12px;}
+.sr-hud-best{font-size:12px;color:var(--dim);}
+.sr-x{font-size:16px;color:var(--dim);background:none;border:none;cursor:pointer;padding:2px 6px;line-height:1;}
+.sr-scorebar{position:relative;flex-shrink:0;text-align:center;margin:10px 0 2px;}
+.sr-score{display:inline-block;font-family:var(--serif);font-weight:600;font-size:48px;line-height:1;transition:transform .12s;}
+.sr-score.pop{transform:scale(1.14);}
+.sr-combo{height:22px;font-size:14px;font-weight:700;color:var(--accent);margin-top:6px;opacity:0;transition:opacity .15s;}
+.sr-combo.show{opacity:1;}
+.sr-combo .m{color:var(--gold);}
+.sr-track{height:8px;background:var(--surface);border-radius:99px;overflow:hidden;flex-shrink:0;margin:14px 0 0;}
+.sr-fill{height:100%;width:100%;background:var(--accent);border-radius:99px;}
+@keyframes sr-drain{0%{width:100%;background:var(--accent)}65%{background:var(--accent)}100%{width:0%;background:var(--red)}}
+.sr-pzone{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:0;}
+.sr-plabel{font-size:12px;color:var(--dim);letter-spacing:.04em;}
+.sr-prompt{font-size:34px;font-weight:700;line-height:1.25;padding:0 6px;}
+.sr-opts{display:flex;flex-direction:column;gap:10px;flex-shrink:0;}
+.sr-opt{font-family:var(--serif);font-size:23px;font-weight:600;padding:17px 16px;border-radius:14px;
+  background:var(--surface);border:1.5px solid var(--border);cursor:pointer;
+  transition:transform .1s,background .15s,border-color .15s;min-height:60px;
+  display:flex;align-items:center;justify-content:center;color:var(--text);}
+.sr-opt:active{transform:scale(.985);}
+.sr-opt.correct{background:var(--green-bg);border-color:var(--green);color:var(--green);}
+.sr-opt.wrong{background:var(--red-bg);border-color:var(--red);color:var(--red);}
+.sr-opt.dim{opacity:.4;}
+.sr-newbest{background:var(--gold);color:#1f1e1d;font-weight:700;font-size:13px;padding:5px 16px;border-radius:99px;letter-spacing:.04em;animation:sr-pulse 1s ease infinite;}
+@keyframes sr-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.sr-final{font-family:var(--serif);font-weight:600;font-size:64px;line-height:1;color:var(--accent);}
+.sr-stats{display:flex;gap:26px;}
+.sr-stat{display:flex;flex-direction:column;gap:2px;}
+.sr-stat .v{font-family:var(--serif);font-weight:600;font-size:26px;}
+.sr-stat .l{font-size:11px;color:var(--dim);}
+.sr-shake{animation:sr-shake .3s;}
+@keyframes sr-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.sr-fade{animation:sr-fade .25s ease;}
+@keyframes sr-fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* 스피드런: 오버레이 / 카운트다운 / 점수팝업 */
+.sr-overlay{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;
+  background:rgba(31,30,29,.82);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);}
+.sr-count{font-family:var(--serif);font-weight:600;font-size:92px;line-height:1;color:var(--accent);animation:sr-pop .35s ease;}
+.sr-ov-box{display:flex;flex-direction:column;align-items:center;gap:14px;animation:sr-fade .2s ease;}
+.sr-ov-title{font-family:var(--serif);font-weight:600;font-size:26px;color:var(--text);}
+.sr-plus{position:absolute;color:var(--green);font-family:var(--serif);font-weight:700;font-size:20px;pointer-events:none;animation:sr-rise .72s ease forwards;}
+@keyframes sr-rise{0%{opacity:0;transform:translateY(10px)}25%{opacity:1}100%{opacity:0;transform:translateY(-30px)}}
+@keyframes sr-pop{0%{transform:scale(.5);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+
+/* 스피드런: 건너뛰기 힌트 / 놓친 단어 / 감소된 모션 */
+.sr-cd{display:flex;flex-direction:column;align-items:center;}
+.sr-skip{margin-top:14px;font-size:12px;color:var(--dim);}
+.sr-missed{margin-top:14px;width:100%;max-width:300px;max-height:30vh;overflow-y:auto;
+  background:var(--surface);border:1px solid var(--hairline);border-radius:12px;padding:10px 12px;text-align:left;}
+.sr-missed-t{font-size:11px;color:var(--dim);margin-bottom:6px;letter-spacing:.04em;}
+.sr-missed-row{display:flex;justify-content:space-between;gap:10px;align-items:baseline;
+  padding:5px 0;border-bottom:1px solid var(--hairline);font-size:14px;}
+.sr-missed-row:last-child{border-bottom:none;}
+.sr-missed-row .k{color:var(--muted);}
+.sr-missed-row .v{font-family:var(--serif);color:var(--text);font-weight:600;}
+@media (prefers-reduced-motion: reduce){
+  .sr-count,.sr-ov-box,.sr-fade,.sr-newbest{animation:none;}
+  .sr-plus{animation:none;opacity:1;}
+  .sr-score.pop{transition:none;}
+  .sr-opt{transition:none;}
+}
+
+/* 💾 백업 안전망 배너 (단계별) */
+.bak-banner{display:flex;align-items:center;gap:11px;border-radius:14px;padding:12px 13px;margin-bottom:10px;border:1px solid;}
+.bak-banner.remind{background:var(--surface);border-color:var(--gold);}
+.bak-banner.urgent{background:var(--red-bg);border-color:var(--red);}
+.bak-ico{font-size:21px;line-height:1;flex-shrink:0;}
+.bak-txt{flex:1;min-width:0;}
+.bak-h{font-size:13px;font-weight:700;line-height:1.3;}
+.bak-banner.remind .bak-h{color:var(--gold);}
+.bak-banner.urgent .bak-h{color:var(--red);}
+.bak-s{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.35;}
+.bak-go{flex-shrink:0;background:var(--accent);color:var(--accent-text);border:none;border-radius:10px;
+  padding:9px 13px;font-size:13px;font-weight:700;font-family:var(--sans);cursor:pointer;white-space:nowrap;}
+.bak-go:active{transform:scale(.96);}
+</style>
+</head>
+<body>
+<div id="app"><div class="wrap" id="root"></div></div>
+<script>
+'use strict';
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   📑  목차 (TABLE OF CONTENTS)
+   ────────────────────────────────────────────────────────────
+   §1  상수 & 순수 유틸
+   §2  단어 은행 (localStorage 우선 · words.json 시드)
+   §3  SRS 알고리즘 (SM-2)
+   §4  데이터 저장소 (Store)
+   §5  음성 (TTS)
+   §6  앱 상태 & 라우터
+   §7  화면 렌더러
+   §8  학습 흐름 (플래시카드 · 퀴즈)
+   §9  단어 관리 (편집 · 추가 · 삭제)
+   §10 백업 / 복원
+   §11 ⚡ 스피드런 게임모드 (읽기전용 · 별도 최고기록)
+   §12 부팅 & 시스템 등록
+   ────────────────────────────────────────────────────────────
+   설계 원칙: 단일 파일 · 빌드 없음 · 오프라인 PWA. 섹션은 §N 배너로 구분.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* ═══════════════════════════════════════════════════════════════
+   §1 · 상수 & 순수 유틸
+═══════════════════════════════════════════════════════════════ */
+
+const WORDS_KEY = 'viet-words-v1';
+
+// vi에 JS 문자열/HTML을 깨뜨릴 수 있는 문자가 있으면 해당 단어를 제외한다.
+// 편집기·import는 이미 validVi로 차단하지만 words.json 시드는 검증을 안 거치므로,
+// 데이터가 WORDS로 들어오는 이 경계에서 한 번 더 걸러 onclick 핸들러 깨짐을 원천 차단.
+const WORD_BAD_VI = /['"`\\<>]/;
+
+const STORAGE_KEY = 'viet-v5';
+
+const norm     = s => s.toLowerCase().normalize('NFC').replace(/\s+/g, ' ').trim();
+
+const DAY_MS          = 864e5; // 하루(ms)
+
+const MASTER_REPS     = 5;   // 마스터 최소 정답 횟수
+
+const MASTER_INTERVAL = 21;  // 마스터 최소 복습 간격(일)
+
+const SESSION_CAP     = 30;  // 한 세션 최대 문제 수
+
+const isMastered = d => d.reps >= MASTER_REPS && d.interval >= MASTER_INTERVAL;
+
+// 로컬 시간 기준 날짜 키 (UTC 사용 시 '하루'가 오전 9시에 바뀌는 버그 방지)
+const dateKey  = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+const todayKey = () => dateKey(new Date());
+
+const shuffle  = arr => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+
+const byId     = id => document.getElementById(id);
+
+// 성조/악센트 무시 비교용 (검색 전용 — 정답 판정에는 사용하지 않음)
+const fold     = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd');
+
+const APP_VERSION   = 'v4.3 · 2026-06-16'; // 배포 확인용 (캐시 반영 여부 1초 체크)
+
+const BACKUP_TS_KEY = 'viet-last-backup'; // 마지막 백업 시각
+
+// 저장 실패 경고 (저장공간 부족/프라이빗 모드) — 세션당 1회만
+function warnSaveFail() {
+  if (App.saveWarned) return;
+  App.saveWarned = true;
+  alert('⚠️ 저장 실패!\n저장공간 부족 또는 프라이빗 브라우징일 수 있어요.\n지금 학습한 내용이 기기에 기록되지 않습니다.');
+}
+
+const esc      = s => s.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#x27;','"':'&quot;'}[c]));
+
+// 복수 뜻 분리: 괄호 밖의 쉼표만 구분자로 인식 ("~로(수단, 방법)"은 한 덩어리)
+const splitMeanings = ko => {
+  const parts = []; let depth = 0, cur = '';
+  for (const ch of ko) {
+    if (ch === '(') depth++;
+    else if (ch === ')') depth = Math.max(0, depth - 1);
+    if (ch === ',' && depth === 0) { parts.push(cur.trim()); cur = ''; }
+    else cur += ch;
+  }
+  if (cur.trim()) parts.push(cur.trim());
+  const out = parts.filter(p => p); // 선행/연속 쉼표로 생긴 빈 항목 제거 (복수뜻 표시 깔끔)
+  return out.length ? out : [ko];
+};
+
+// vi 검증: 비어있지 않고, JS 문자열/HTML을 깨는 문자 금지
+function validVi(vi) {
+  if (!vi) { alert('베트남어를 입력해주세요.'); return false; }
+  if (/['"`\\<>]/.test(vi)) { alert('따옴표 등 특수문자는 사용할 수 없어요.'); return false; }
+  return true;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   §2 · 단어 은행 (localStorage 우선 · words.json 시드)
+═══════════════════════════════════════════════════════════════ */
+
+let WORDS = [];
+
+let TOTAL = 0;
+
+function saveWords() {
+  try { localStorage.setItem(WORDS_KEY, JSON.stringify(WORDS)); }
+  catch (e) { warnSaveFail(); }
+  TOTAL = WORDS.length;
+}
+
+function sanitizeWords(arr) {
+  return arr.filter(w =>
+    w && typeof w.vi === 'string' && typeof w.ko === 'string'
+    && w.vi.trim() && w.ko.trim() && !WORD_BAD_VI.test(w.vi)
+  );
+}
+
+async function loadWords() {
+  // 1) localStorage에 단어장이 있으면 그것이 원본
+  try {
+    const raw = localStorage.getItem(WORDS_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (Array.isArray(data) && data.length) {
+        const clean = sanitizeWords(data);
+        if (clean.length) {
+          WORDS = Object.freeze(clean);
+          TOTAL = clean.length;
+          // 손상 항목이 걸러졌으면 저장본도 정제본으로 자가교정
+          if (clean.length !== data.length) { try { localStorage.setItem(WORDS_KEY, JSON.stringify(clean)); } catch (e) {} }
+          return;
+        }
+      }
+    }
+  } catch (e) { console.warn('단어장 localStorage 손상, words.json으로 재시드:', e); }
+
+  // 2) 최초 실행(또는 손상): words.json을 시드로 가져와 저장
+  try {
+    const res = await fetch('words.json');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) throw new Error('empty');
+    const clean = sanitizeWords(data);
+    if (!clean.length) throw new Error('no valid words');
+    WORDS = Object.freeze(clean);
+    TOTAL = WORDS.length;
+    try { localStorage.setItem(WORDS_KEY, JSON.stringify(clean)); } catch (e) {}
+  } catch (e) {
+    console.error('words.json load failed:', e);
+    App.loadError = true;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   §3 · SRS 알고리즘 (SM-2)
+═══════════════════════════════════════════════════════════════ */
+
+function sm2(card = {}, quality) {
+  // quality: 0=Again, 3=Hard, 4=Good
+  let { easiness = 2.5, interval = 0, reps = 0 } = card;
+  if (quality >= 3) {
+    if (reps === 0)      interval = 1;
+    else if (reps === 1) interval = quality === 3 ? 2 : 3; // Hard: 2일, Good: 3일
+    else if (quality === 3) interval = Math.max(1, Math.round(interval * 1.2)); // Hard: 소폭 증가
+    else                    interval = Math.round(interval * easiness);          // Good: 정상 SM-2
+    reps++;
+  } else {
+    interval = 1;
+    reps = 0;
+  }
+  easiness = Math.max(1.3, easiness + 0.1 - (4 - quality) * (0.08 + (4 - quality) * 0.02));
+  return { easiness: parseFloat(easiness.toFixed(2)), interval, reps, nextReview: Date.now() + interval * DAY_MS };
+}
+
+function nextInterval(quality) {
+  const word = App.queue[App.qIdx];
+  if (!word) return 1;
+  const card = Store.srs[word.vi] || {};
+  const result = sm2(card, quality);
+  return result.interval;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   §4 · 데이터 저장소 (Store)
+═══════════════════════════════════════════════════════════════ */
+
+const Store = {
+  _data: { srs: {}, log: {} },
+
+  load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (!p || typeof p !== 'object') throw new Error('corrupted');
+        this._data = { srs: p.srs || {}, log: p.log || {} };
+      }
+    } catch (e) {
+      console.warn('localStorage 손상, 초기화:', e);
+      this._data = { srs: {}, log: {} };
+      try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+      App.storageWarning = true;
+    }
+    return this;
+  },
+
+  save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(this._data)); }
+    catch (e) { warnSaveFail(); }
+    return this;
+  },
+
+  get srs()  { return this._data.srs; },
+  get log()  { return this._data.log; },
+
+  recordAnswer(vi, quality) {
+    // quality: 0=Again, 3=Hard, 4=Good
+    const prev = this._data.srs[vi] || {};
+    const correct = quality >= 3;
+    this._data.srs[vi] = {
+      ...sm2(prev, quality),
+      wrongCount: Math.max(0, (prev.wrongCount || 0) + (correct ? -1 : 1)),
+      lastSeen: Date.now(),
+    };
+    const today = todayKey();
+    const d = this._data.log[today] || { c: 0, w: 0 };
+    this._data.log[today] = { c: d.c + (correct ? 1 : 0), w: d.w + (correct ? 0 : 1) };
+    this.save();
+  },
+
+  reset() { this._data = { srs: {}, log: {} }; this.save(); },
+
+  export() { return JSON.stringify({ version: 1, srs: this._data.srs, log: this._data.log }); },
+
+  import(json) {
+    const p = JSON.parse(json);
+    if (!p.srs || typeof p.srs !== 'object' || Array.isArray(p.srs)) throw new Error('invalid srs');
+    if (p.log && (typeof p.log !== 'object' || Array.isArray(p.log))) throw new Error('invalid log');
+    this._data = { srs: p.srs, log: p.log || {} };
+    this.save();
+  },
+
+  getDueWords() {
+    const now = Date.now();
+    const due = WORDS.filter(w => { const d = this.srs[w.vi]; return d && d.nextReview <= now; });
+    const nw  = WORDS.filter(w => !this.srs[w.vi]);
+    return [...due, ...nw];
+  },
+
+  // ── 플래시카드 전용: 틀린 단어 + 내일 복습 예정 우선 ──────────
+  getFlashDeck() {
+    const now = Date.now();
+    const tomorrow = now + DAY_MS;
+
+    // 1순위: 틀린 적 있는 단어 (wrongCount > 0)
+    const wrong = WORDS.filter(w => {
+      const d = this.srs[w.vi];
+      return d && d.wrongCount > 0;
+    }).sort((a, b) => (this.srs[b.vi].wrongCount || 0) - (this.srs[a.vi].wrongCount || 0));
+
+    // 2순위: 내일 복습 예정 단어 (nextReview <= tomorrow)
+    const upcoming = WORDS.filter(w => {
+      const d = this.srs[w.vi];
+      return d && d.nextReview > now && d.nextReview <= tomorrow && !(d.wrongCount > 0);
+    });
+
+    // 3순위: 아직 안 본 새 단어
+    const unseen = WORDS.filter(w => !this.srs[w.vi]);
+
+    // 전체 합치기 (없으면 빈 배열 → '오늘 볼 카드 없음' 표시)
+    return [...wrong, ...upcoming, ...unseen];
+  },
+
+  // 오늘 기준 복습 대기 수
+  get dueCount() {
+    const now = Date.now();
+    return WORDS.filter(w => { const d = this.srs[w.vi]; return d && d.nextReview <= now; }).length
+         + WORDS.filter(w => !this.srs[w.vi]).length;
+  },
+
+  get learned()  { return Object.keys(this.srs).length; },
+  get mastered() { return Object.values(this.srs).filter(isMastered).length; },
+
+  // 🔥 일일 연속 학습 (오늘 기록이 없으면 어제부터 — 아직 공부 전이어도 스트릭이 끊겨 보이지 않게)
+  get dayStreak() {
+    let streak = 0;
+    const d = new Date();
+    if (!this.log[dateKey(d)]) d.setDate(d.getDate() - 1);
+    while (true) {
+      const e = this.log[dateKey(d)];
+      if (!e || e.c + e.w === 0) break;
+      streak++;
+      d.setDate(d.getDate() - 1);
+    }
+    return streak;
+  },
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   §5 · 음성 (TTS)
+═══════════════════════════════════════════════════════════════ */
+
+const TTS = {
+  init() {
+    if (!window.speechSynthesis) return;
+    const load = () => window.speechSynthesis.getVoices();
+    load();
+    window.speechSynthesis.addEventListener('voiceschanged', load);
+  },
+  speak(text, rate = 0.85) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'vi-VN'; u.rate = rate;
+    const v = window.speechSynthesis.getVoices().find(v => v.lang.startsWith('vi'));
+    if (v) u.voice = v;
+    window.speechSynthesis.speak(u);
+  },
+  cancel() { if (window.speechSynthesis) window.speechSynthesis.cancel(); },
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   §6 · 앱 상태 & 라우터
+═══════════════════════════════════════════════════════════════ */
+
+const App = {
+  tab: 0,           // 0=홈 1=카드 2=오답 3=통계
+  loadError: false,
+  storageWarning: false,
+  snapshot: null,   // ✏️ 오답 취소용 스냅샷
+  pendingRate: false, // 정답 후 Hard/Good 평가 대기 중
+  screen: 'home',   // home | quiz | done
+  mode: null,
+  queue: [], qIdx: 0,
+  phase: 'idle',    // idle | playing | correct | wrong
+  input: '',
+  streak: 0, sesC: 0, sesW: 0,
+  sesWrong: [],     // 이번 세션 오답 단어 (✏️ 롤백 대응 위해 중복 포함, 표시 시 dedup)
+  pulsing: false, shaking: false,
+  quizDomReady: false, // 퀴즈 골격 DOM 존재 여부 (부분 갱신용)
+  saveWarned: false,   // 저장 실패 경고 1회 표시 여부
+  flashDeck: [], flashIdx: 0, flipped: false,
+  swipeX: null, swipeY: 0, swipedAt: 0, // 플래시 스와이프 (시작좌표 / 직후 click 무시 기준시각)
+  chartDays: 14,
+  showMastered: false, // 통계탭 마스터 목록 펼침 여부
+  editOpen: false,     // 단어장 편집 펼침 여부
+  editSearch: '',      // 편집 검색어
+  editingVi: null,     // 인라인 수정 중인 단어 (vi 키)
+  addingNew: false,    // 새 단어 추가 폼 표시 여부
+};
+
+function render() {
+  const root = byId('root');
+  if (App.storageWarning) {
+    App.storageWarning = false;
+    alert('⚠️ 저장된 데이터가 손상되어 초기화했어요.\n백업이 있다면 복원해주세요.');
+  }
+  if (App.loadError) {
+    App.quizDomReady = false;
+    root.innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;text-align:center;">
+      <div style="font-size:48px">⚠️</div>
+      <div style="font-size:16px;color:var(--red);font-weight:700">단어장 로드 실패</div>
+      <div style="font-size:13px;color:var(--muted)">words.json 파일을 불러올 수 없어요.</div>
+      <button onclick="location.reload()" class="btn-accent" style="width:auto;padding:12px 24px;">🔄 새로고침</button>
+    </div>`;
+    return;
+  }
+  if (App.screen === 'speedrun') { srRender(); return; }
+  // 퀴즈: 골격은 세션당 1회만 그리고, 이후엔 부분 갱신 (input 유지 → iOS 키보드 안 내려감)
+  if (App.screen === 'quiz') {
+    if (!App.quizDomReady) {
+      root.innerHTML = renderQuizSkeleton();
+      App.quizDomReady = true;
+    }
+    updateQuiz();
+    return;
+  }
+  App.quizDomReady = false; // 퀴즈 밖 화면이 골격을 덮어씀
+  const isHome = App.screen === 'home';
+  root.innerHTML = renderHeader() + renderScreen() + (isHome ? renderTabbar() : '');
+  if (isHome && App.tab === 3) {
+    const cw = byId('chart-wrap');
+    if (cw) cw.scrollLeft = cw.scrollWidth; // 차트를 '오늘'(우측 끝)에 맞춤
+  }
+}
+
+function renderHeader() {
+  return `<div class="header"><span class="brand">🇻🇳 베트남어 단어장</span></div>`;
+}
+
+function renderTabbar() {
+  const tabs = [
+    { ic:'🏠', t:'홈' }, { ic:'🃏', t:'카드' }, { ic:'📕', t:'오답' }, { ic:'📊', t:'통계' },
+  ];
+  return `<nav class="tabbar">${tabs.map((t, i) =>
+    `<button class="tb${App.tab === i ? ' on' : ''}" onclick="setTab(${i})"><span class="ic">${t.ic}</span>${t.t}</button>`
+  ).join('')}</nav>`;
+}
+
+function renderScreen() {
+  if (App.screen === 'done') return renderDone();
+  switch (App.tab) {
+    case 0: return renderHome();
+    case 1: return renderFlashHome();
+    case 2: return renderWrongNote();
+    case 3: return renderStats();
+  }
+}
+
+// 정답 후 평가 안 하고 화면을 벗어나려 할 때 확인창
+// 반환값: true=나가도 됨, false=나가기 취소(화면 유지)
+function confirmLeave() {
+  if (App.pendingRate) {
+    if (!confirm('아직 Hard/Good 평가를 안 했어요.\n나가면 이번 정답은 기록되지 않아요.\n\n그래도 나가시겠어요?')) {
+      return false; // 계속 평가 → 나가기 취소
+    }
+    App.pendingRate = false; // 나가기 → 기록 없이 진행
+  }
+  App.snapshot = null;
+  return true;
+}
+
+// 퀴즈 화면을 벗어날 때 세션 잔여 상태 완전 정리 (phase/queue 꼬임 방지)
+function resetQuizSession() {
+  TTS.cancel(); // 화면 이탈 시 재생 중인 음성 정지 (오디오 블리드 방지)
+  App.phase = 'idle'; App.queue = []; App.qIdx = 0;
+  App.input = ''; App.shaking = false; App.pulsing = false;
+  App.sesWrong = []; // done 화면 렌더 후에만 호출되므로 표시에 영향 없음
+}
+
+// 화면 전환 시에만 크로스페이드 (지원 기기 한정, 미지원 시 즉시 렌더)
+function renderWithTransition() {
+  if (document.startViewTransition) document.startViewTransition(() => render());
+  else render();
+}
+
+function setTab(i) { if (!confirmLeave()) return; resetQuizSession(); App.tab = i; App.screen = 'home'; renderWithTransition(); }
+
+function goHome()  { if (!confirmLeave()) return; resetQuizSession(); App.screen = 'home'; renderWithTransition(); }
+
+/* ═══════════════════════════════════════════════════════════════
+   §7 · 화면 렌더러
+═══════════════════════════════════════════════════════════════ */
+
+function renderHome() {
+  const due   = Store.dueCount;
+  const today = Store.log[todayKey()] || { c: 0, w: 0 };
+  const done  = today.c + today.w;
+  const total = done + due;
+  const pct   = total > 0 ? done / total : 1;
+  const C     = 2 * Math.PI * 85;
+
+  // 💾 백업 안전망: 보호 안 된 학습 데이터가 쌓이면 단계별 경고(+원탭 백업)
+  const lastBak      = Number(localStorage.getItem(BACKUP_TS_KEY) || 0);
+  const bakLogKeys   = Object.keys(Store.log);
+  const bakStudyDays = bakLogKeys.length;
+  const bakFirstDays = bakStudyDays
+    ? Math.floor((Date.now() - new Date(bakLogKeys.sort()[0] + 'T00:00:00').getTime()) / DAY_MS) : 0;
+  const bakAge       = lastBak ? Math.floor((Date.now() - lastBak) / DAY_MS) : bakFirstDays; // 미보호 기간(일)
+  const bakTier      = (Store.learned > 0 && bakAge >= 14) ? 'urgent'
+                     : (Store.learned > 0 && bakAge >= 7)  ? 'remind' : null;
+
+  return `<div style="flex:1;overflow-y:auto;padding:4px 18px calc(96px + env(safe-area-inset-bottom));animation:fadeUp .25s ease;">
+    <div class="ring-zone">
+      <div class="ring-wrap">
+        <svg width="188" height="188">
+          <circle class="ring-bg" cx="94" cy="94" r="85"/>
+          <circle class="ring-fg" cx="94" cy="94" r="85" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct)}"/>
+        </svg>
+        <div class="ring-core">
+          ${due > 0
+            ? `<div class="big">${due}</div><div class="lab">복습 대기</div>`
+            : `<div class="big" style="color:var(--green)">✓</div><div class="lab">오늘 완료</div>`}
+        </div>
+      </div>
+    </div>
+
+    <div class="counts">
+      ${Store.dayStreak > 0 ? `<div class="cnt">🔥 <b style="color:var(--accent)">${Store.dayStreak}</b>일 연속</div>` : ''}
+      <div class="cnt">오늘 ✅ <b style="color:var(--green)">${today.c}</b> ❌ <b style="color:var(--red)">${today.w}</b></div>
+      <div class="cnt">⭐ 마스터 <b style="color:var(--gold)">${Store.mastered}</b></div>
+    </div>
+
+    <div class="launch">
+      <button onclick="startQuiz('dictation')" ${due === 0 ? 'disabled' : ''}>
+        <div class="ic">🎧</div><div class="tt">받아쓰기</div>
+      </button>
+      <button onclick="startQuiz('krvi')" ${due === 0 ? 'disabled' : ''}>
+        <div class="ic">✍️</div><div class="tt">단어쓰기</div>
+      </button>
+      <button onclick="srOpen()" style="grid-column:1/-1;display:flex;align-items:center;gap:13px;border-color:var(--accent);background:var(--accent-soft);">
+        <div style="font-size:25px;line-height:1">⚡</div>
+        <div style="flex:1"><div style="font-size:15px;font-weight:700">스피드런</div><div style="font-size:11px;color:var(--muted);font-weight:400;margin-top:2px">빠르게 풀고, 최고 기록에 도전하세요!</div></div>
+        <div style="color:var(--accent);font-size:18px">›</div>
+      </button>
+    </div>
+
+    ${bakTier ? `
+    <div class="bak-banner ${bakTier}">
+      <div class="bak-ico">${bakTier === 'urgent' ? '⚠️' : '💾'}</div>
+      <div class="bak-txt">
+        <div class="bak-h">${lastBak ? `${bakAge}일째 백업 안 함` : '아직 백업한 적 없어요'}</div>
+        <div class="bak-s">${bakStudyDays}일 학습기록·마스터 ${Store.mastered}개 — 이 기기에만 있어요</div>
+      </div>
+      <button class="bak-go" onclick="doExportFile()">지금 백업</button>
+    </div>` : ''}
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;"><span>전체 진도</span><span>${Store.learned}/${TOTAL}</span></div>
+      <div class="prog-track"><div class="prog-fill" style="width:${TOTAL > 0 ? (Store.learned / TOTAL) * 100 : 0}%"></div></div>
+    </div>
+  </div>`;
+}
+
+function renderFlashHome() {
+  if (!App.flashDeck.length) App.flashDeck = Store.getFlashDeck();
+  if (!App.flashDeck.length) {
+    // 오답·내일 복습·새 단어가 모두 없음
+    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:32px;text-align:center;animation:fadeUp .25s ease;">
+      <div style="font-size:48px;color:var(--green)">✓</div>
+      <div style="font-size:16px;font-weight:700">오늘 볼 카드가 없어요</div>
+      <div style="font-size:12px;color:var(--dim)">오답·내일 복습·새 단어가 생기면 여기 나타나요</div>
+    </div>`;
+  }
+  const deck = App.flashDeck;
+  const idx  = Math.min(App.flashIdx, deck.length - 1);
+  const word = deck[idx];
+  const fm   = splitMeanings(word.ko); // 복수 뜻 순번 표시용
+
+  // 덱 구성 정보
+  const wrongCount    = deck.filter(w => Store.srs[w.vi]?.wrongCount > 0).length;
+  const upcomingCount = deck.filter(w => {
+    const d = Store.srs[w.vi];
+    return d && d.nextReview > Date.now() && d.nextReview <= Date.now() + DAY_MS && !d.wrongCount;
+  }).length;
+  const newCount = deck.filter(w => !Store.srs[w.vi]).length;
+
+  return `<div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;padding:8px 18px calc(96px + env(safe-area-inset-bottom));gap:14px;animation:fadeUp .25s ease;">
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      ${wrongCount > 0 ? `<div class="badge-err">❌ 오답 ${wrongCount}개</div>` : ''}
+      ${upcomingCount > 0 ? `<div class="badge" style="color:var(--accent)">📅 내일복습 ${upcomingCount}개</div>` : ''}
+      ${newCount > 0 ? `<div class="badge" style="color:var(--muted)">🆕 새단어 ${newCount}개</div>` : ''}
+    </div>
+
+    <div class="flash-scene" onclick="flashFlip()" ontouchstart="flashTouchStart(event)" ontouchend="flashTouchEnd(event)">
+      <div class="flash-inner${App.flipped ? ' flipped' : ''}">
+        <div class="flash-face flash-front">
+          <div class="fl-word" style="color:var(--text)">${esc(word.vi)}</div>
+          <div style="font-size:12px;color:var(--dim);margin-top:12px">탭하여 뒤집기</div>
+        </div>
+        <div class="flash-face flash-back">
+          <div style="font-size:${fm.length > 1 ? '19px' : '23px'};font-weight:700;color:var(--green);text-align:center;line-height:1.5">${
+            fm.length > 1
+              ? fm.map((m, i) => `${i + 1}. ${esc(m)}`).join('<br>')
+              : esc(word.ko)
+          }</div>
+          <div style="font-family:var(--serif);font-style:italic;font-size:16px;color:var(--muted);margin-top:8px">${esc(word.vi)}</div>
+          <button onclick="event.stopPropagation();TTS.speak('${esc(word.vi)}')" style="margin-top:12px;padding:6px 16px;border-radius:20px;border:1px solid var(--green);background:transparent;color:var(--green);font-size:12px;cursor:pointer;">🔊 듣기</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button onclick="flashPrev()" ${idx === 0 ? 'disabled' : ''} class="fl-nav-btn" style="flex:1;">←</button>
+      <button onclick="flashNext()" class="btn-accent" style="flex:2;width:auto;">
+        ${idx < deck.length - 1 ? '다음 →' : '완료 ✓'}
+      </button>
+    </div>
+    <div style="text-align:center;font-size:12px;color:var(--dim)">${idx + 1} / ${deck.length}</div>
+  </div>`;
+}
+
+function renderQuizSkeleton() {
+  return `
+    <div class="header">
+      <button onclick="goHome()" class="back-btn">←</button>
+      <div class="streak" id="q-streak">🔥 0</div>
+    </div>
+    <div style="padding:4px 20px 0;flex-shrink:0;">
+      <div class="prog-track"><div class="prog-fill" id="q-fill" style="width:0%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-top:4px;">
+        <span id="q-ses"></span><span id="q-pos"></span>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 20px 8px;gap:16px;">
+      <div id="q-stage" style="display:flex;flex-direction:column;align-items:center;gap:16px;width:100%"></div>
+      <div id="q-fb" style="width:100%"></div>
+    </div>
+    <div class="input-area">
+      <input id="qi" class="answer-input" placeholder=""
+        autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+        oninput="App.input=this.value"
+        onkeydown="if(event.key==='Enter')quizEnter()"
+      >
+      <div id="q-btns"></div>
+    </div>`;
+}
+
+function updateQuiz() {
+  const word = App.queue[App.qIdx];
+  if (App.phase === 'idle' || !word) return;
+
+  const card  = Store.srs[word.vi] || {};
+  const reps  = card.reps || 0;
+  const wc    = card.wrongCount || 0;
+  const hasRecord = !!Store.srs[word.vi];
+  const bLabel = !hasRecord ? '🆕 새 단어'
+               : isMastered(card) ? '⭐ 숙련'
+               : `🔄 복습 ${reps}회`;
+  const bColor = !hasRecord ? 'var(--muted)'
+               : isMastered(card) ? 'var(--green)'
+               : 'var(--accent)';
+  const isDict   = App.mode === 'dictation';
+  const meanings = splitMeanings(word.ko); // 복수 뜻 순번 표시용
+
+  byId('q-streak').innerHTML = `🔥 ${App.streak}`;
+  byId('q-fill').style.width = `${(App.qIdx / App.queue.length) * 100}%`;
+  byId('q-ses').innerHTML = `✅${App.sesC} ❌${App.sesW}`;
+  byId('q-pos').innerHTML = `${App.qIdx + 1}/${App.queue.length}`;
+
+  byId('q-stage').innerHTML = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+      <div class="badge" style="color:${bColor}">${bLabel}</div>
+      ${wc > 0 ? `<div class="badge-err">❌ ${wc}회</div>` : ''}
+    </div>
+    ${isDict ? `
+      <button onclick="quizSpeak()" class="big-spk${App.pulsing ? ' pulsing' : ''}">🔊</button>
+      <button onclick="TTS.speak('${esc(word.vi)}',0.5)" class="slow-btn">🐢 천천히</button>
+    ` : `
+      <div class="q-stage"${meanings.length > 1 ? ' style="font-size:25px"' : ''}>${
+        meanings.length > 1
+          ? meanings.map((m, i) => `${i + 1}. ${esc(m)}`).join('<br>')
+          : esc(word.ko)
+      }</div>
+    `}`;
+
+  // 피드백: 받아쓰기만 뜻 표시 (단어쓰기는 문제에 이미 뜻이 있음)
+  byId('q-fb').innerHTML = App.phase === 'playing' ? '' : `
+    <div class="feedback ${App.phase === 'correct' ? 'ok' : 'fail'}">
+      <div style="font-size:15px;font-weight:700;color:${App.phase === 'correct' ? 'var(--green)' : 'var(--red)'}">
+        ${App.phase === 'correct' ? '✅ 정답' : '❌ 오답'}
+      </div>
+      <div class="fb-word" onclick="TTS.speak('${esc(word.vi)}')" style="cursor:pointer">${esc(word.vi)} <span style="font-size:14px;opacity:.45">🔊</span></div>
+      ${isDict ? `<div style="font-size:13px;color:var(--muted);margin-top:3px">${
+        meanings.length > 1
+          ? meanings.map((m, i) => `${i + 1}. ${esc(m)}`).join(' · ')
+          : esc(word.ko)
+      }</div>` : ''}
+      ${App.phase === 'wrong' ? `<div style="font-size:12px;color:var(--dim);margin-top:6px">내 답: ${esc(App.input)}</div>` : ''}
+    </div>`;
+
+  if (App.phase === 'playing') {
+    byId('q-btns').innerHTML = `<button class="confirm-btn" onclick="quizSubmit()">확인 →</button>`;
+  } else if (App.phase === 'wrong') {
+    byId('q-btns').innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;">
+        <button onclick="quizRate(0)" class="btn-again">😓 Again — 다시 볼게요</button>
+        <button onclick="retryInput()" class="btn-edit">✏️</button>
+      </div>`;
+  } else {
+    // 평가 버튼용 다음 간격 (정답 시에만 계산)
+    const ni3  = nextInterval(3);
+    const ni4  = nextInterval(4);
+    const star = (reps >= MASTER_REPS - 1 && ni4 >= MASTER_INTERVAL) ? ' ⭐' : '';
+    byId('q-btns').innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button onclick="quizRate(3)" class="btn-hard">🤔 Hard<span class="btn-sub">${ni3}일 후</span></button>
+        <button onclick="quizRate(4)" class="btn-good">😊 Good${star}<span class="btn-sub">${ni4}일 후</span></button>
+      </div>`;
+  }
+
+  // input은 절대 disable하지 않음 (iOS에서 키보드가 내려가는 원인)
+  const inp = byId('qi');
+  inp.placeholder = isDict ? '철자 입력…' : '베트남어 입력…';
+  inp.className = 'answer-input'
+    + (App.phase === 'correct' ? ' ok' : App.phase === 'wrong' ? ' fail' : '')
+    + (App.shaking ? ' shaking' : '');
+  if (App.phase === 'playing') {
+    if (inp.value !== App.input) inp.value = App.input;
+    if (document.activeElement !== inp) inp.focus(); // 클릭 핸들러 동기 흐름 → iOS 허용
+  }
+}
+
+function renderDone() {
+  // 이번 세션 오답 (중복 제거, 처음 틀린 순서 유지)
+  const wrongs = [...new Set(App.sesWrong)]
+    .map(vi => ({ vi, ko: WORDS.find(w => w.vi === vi)?.ko || '' }));
+  return `<div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;gap:18px;text-align:center;animation:fadeUp .4s ease;">
+    <div style="font-size:56px">${App.sesC > App.sesW ? '🏆' : '💪'}</div>
+    <div style="font-family:var(--serif);font-size:28px;font-weight:600;color:var(--accent)">완료!</div>
+    <div style="display:flex;gap:24px;">
+      <div><div style="font-size:34px;font-weight:700;color:var(--green)">${App.sesC}</div><div style="font-size:12px;color:var(--muted)">정답</div></div>
+      <div><div style="font-size:34px;font-weight:700;color:var(--red)">${App.sesW}</div><div style="font-size:12px;color:var(--muted)">오답</div></div>
+    </div>
+    ${wrongs.length ? `
+    <div style="width:100%;max-width:320px;text-align:left;">
+      <div class="eyebrow" style="margin-bottom:8px">이번 세션 오답 ${wrongs.length}개 · 탭하면 발음</div>
+      ${wrongs.map(w => `
+      <div onclick="TTS.speak('${esc(w.vi)}')" style="display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--hairline);border-radius:14px;padding:10px 13px;margin-bottom:6px;cursor:pointer;">
+        <span style="font-family:var(--serif);font-style:italic;font-size:16px;font-weight:600">${esc(w.vi)}</span>
+        <span style="flex:1;font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right">${esc(w.ko)}</span>
+        <span style="font-size:13px;opacity:.45">🔊</span>
+      </div>`).join('')}
+    </div>` : `<div style="font-size:13px;color:var(--green)">🎉 전부 정답!</div>`}
+    <button class="btn-accent" style="width:auto;padding:14px 32px;" onclick="goHome()">홈으로 →</button>
+  </div>`;
+}
+
+function renderWrongNote() {
+  const list = Object.entries(Store.srs)
+    .filter(([, d]) => d.wrongCount > 0)
+    .sort((a, b) => b[1].wrongCount - a[1].wrongCount)
+    .map(([vi, d]) => ({ vi, ko: WORDS.find(w => w.vi === vi)?.ko || '', wc: d.wrongCount, reps: d.reps }));
+
+  if (!list.length) return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--dim);"><div style="font-size:48px">🎉</div><div>오답 없음!</div></div>`;
+
+  return `<div style="flex:1;overflow-y:auto;padding:8px 18px calc(96px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;animation:fadeUp .25s ease;">
+    <div style="font-size:11px;color:var(--dim);margin-bottom:4px">총 ${list.length}개 · 많이 틀린 순 · 탭하면 발음</div>
+    ${list.map(w => `
+      <div onclick="TTS.speak('${esc(w.vi)}')" class="w-item">
+        <div style="background:var(--red-bg);border:1px solid var(--red);border-radius:10px;padding:3px 10px;font-size:12px;color:var(--red);font-weight:700;flex-shrink:0;">❌${w.wc}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="w-vi">${esc(w.vi)}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(w.ko)}</div>
+        </div>
+        <div style="font-size:11px;color:var(--dim)">${isMastered(Store.srs[w.vi]||{})?'⭐':w.reps>0?`🔄${w.reps}`:'🆕'}</div>
+        <span style="font-size:16px;opacity:.5">🔊</span>
+      </div>`).join('')}
+  </div>`;
+}
+
+function renderStats() {
+  const log  = Store.log;
+  const allC = Object.values(log).reduce((a, d) => a + d.c, 0);
+  const allW = Object.values(log).reduce((a, d) => a + d.w, 0);
+  const allT = allC + allW;
+  const studyDays = Object.values(log).filter(d => d.c + d.w > 0).length;
+  const acc  = allT > 0 ? Math.round(allC / allT * 100) + '%' : '-';
+  const n    = App.chartDays;
+  const today = todayKey();
+
+  const chartData = Array.from({ length: n }, (_, i) => {
+    const d = new Date(); d.setDate(d.getDate() - (n - 1 - i));
+    const key = dateKey(d); // 로컬 날짜 기준 (todayKey와 동일 체계)
+    const entry = log[key] || { c: 0, w: 0 };
+    return { key, label: `${d.getMonth()+1}/${d.getDate()}`, c: entry.c, w: entry.w, t: entry.c + entry.w };
+  });
+  const maxT = Math.max(...chartData.map(d => d.t), 1);
+  const barW = Math.max(Math.floor(320 / n), 10);
+
+  // 💾 마지막 백업 정보
+  const lastBak = Number(localStorage.getItem(BACKUP_TS_KEY) || 0);
+  const bakDays = lastBak ? Math.floor((Date.now() - lastBak) / DAY_MS) : null;
+  const backupInfo = lastBak
+    ? `마지막 백업: ${bakDays === 0 ? '오늘' : bakDays + '일 전'} (${dateKey(new Date(lastBak))})`
+    : '아직 백업한 적 없어요';
+
+  // ⭐ 마스터 단어 목록 (간격 긴 순 = 가장 오래 기억하는 순)
+  const masteredList = App.showMastered
+    ? Object.entries(Store.srs)
+        .filter(([, d]) => isMastered(d))
+        .sort((a, b) => b[1].interval - a[1].interval)
+        .map(([vi, d]) => ({ vi, ko: WORDS.find(w => w.vi === vi)?.ko || '', interval: d.interval }))
+    : [];
+
+  return `<div style="flex:1;overflow-y:auto;padding:8px 18px calc(96px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;animation:fadeUp .25s ease;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      ${[
+        { e:'✅', v:allC,      c:'var(--green)',  l:'전체 정답' },
+        { e:'❌', v:allW,      c:'var(--red)',    l:'전체 오답' },
+        { e:'📅', v:studyDays, c:'var(--accent)', l:'학습일수'  },
+        { e:'🎯', v:acc,       c:'var(--gold)',   l:'정답률'    },
+      ].map(s => `<div class="card" style="text-align:center;padding:12px;">
+        <div style="font-size:18px">${s.e}</div>
+        <div style="font-size:22px;font-weight:700;color:${s.c};margin-top:3px">${s.v}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px">${s.l}</div>
+      </div>`).join('')}
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:12px;color:var(--muted);font-weight:700">최근 ${n}일</div>
+        <div style="display:flex;gap:4px;">
+          ${[7,14,30,60].map(d => `<button onclick="App.chartDays=${d};render()" class="range-btn${App.chartDays===d?' on':''}">${d}일</button>`).join('')}
+        </div>
+      </div>
+      <div class="chart-wrap" id="chart-wrap">
+        <div class="chart-bars" style="min-width:${barW*n}px;">
+          ${chartData.map(d => {
+            const th = (d.t / maxT) * 90;
+            const ch = d.t > 0 ? (d.c / d.t) * th : 0;
+            const wh = th - ch;
+            const it = d.key === today;
+            return `<div class="bar-col" style="width:${barW}px;">
+              <div class="bar-inner">
+                ${d.t > 0 ? `
+                  <div style="width:100%;height:${ch}px;background:var(--green);border-radius:3px 3px 0 0;opacity:${it?1:.7}"></div>
+                  ${wh > 0 ? `<div style="width:100%;height:${wh}px;background:var(--red);opacity:${it?1:.7}"></div>` : ''}
+                ` : `<div style="width:100%;height:4px;background:var(--surface-2);border-radius:3px;margin-top:auto"></div>`}
+              </div>
+              <div class="bar-label${it?' today':''}">${d.label}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:10px;justify-content:center;">
+        <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)"><div style="width:8px;height:8px;background:var(--green);border-radius:2px"></div>정답</div>
+        <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)"><div style="width:8px;height:8px;background:var(--red);border-radius:2px"></div>오답</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:700">단어 레벨</div>
+      ${[
+        { l:'🆕 미학습', c:TOTAL - Store.learned,          col:'var(--surface-2)' },
+        { l:'🔄 학습중', c:Store.learned - Store.mastered, col:'var(--gold)' },
+        { l:'⭐ 마스터', c:Store.mastered,                 col:'var(--green)' },
+      ].map(s => `<div style="margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px;"><span>${s.l}</span><span>${s.c}개</span></div>
+        <div class="prog-track"><div style="height:100%;border-radius:99px;background:${s.col};width:${TOTAL > 0 ? (s.c/TOTAL)*100 : 0}%;transition:width .6s"></div></div>
+      </div>`).join('')}
+    </div>
+
+    <div class="card">
+      <button onclick="App.showMastered=!App.showMastered;render()" style="width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:none;color:var(--text);font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;padding:0;">
+        <span style="color:var(--muted)">⭐ 마스터 단어 <span style="color:var(--green)">${Store.mastered}</span>개</span>
+        <span style="color:var(--dim);font-size:14px">${App.showMastered ? '▾' : '▸'}</span>
+      </button>
+      ${App.showMastered ? `
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
+        ${masteredList.length === 0
+          ? `<div style="font-size:12px;color:var(--dim);text-align:center;padding:8px 0">아직 마스터한 단어가 없어요</div>`
+          : masteredList.map(w => `
+          <div onclick="TTS.speak('${esc(w.vi)}')" style="display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--hairline);cursor:pointer;">
+            <div style="flex:1;min-width:0;">
+              <span style="font-family:var(--serif);font-style:italic;font-size:15px;font-weight:600">${esc(w.vi)}</span>
+              <span style="font-size:11px;color:var(--muted);margin-left:8px">${esc(w.ko)}</span>
+            </div>
+            <span style="font-size:10px;color:var(--dim);flex-shrink:0">${w.interval}일</span>
+          </div>`).join('')}
+      </div>` : ''}
+    </div>
+
+    ${renderEditor()}
+
+    <div class="backup-card">
+      <div style="font-size:12px;color:var(--muted);font-weight:700">💾 백업 / 복원</div>
+      <div style="font-size:11px;color:var(--dim)">단어장+학습기록 전체를 한 파일로. 공부 후 가끔 백업해두세요!</div>
+      <div style="display:flex;gap:8px;">
+        <button class="backup-btn" onclick="doExportFile()">📁 백업 저장</button>
+        <button class="backup-btn" onclick="doImportFile()">📂 복원</button>
+      </div>
+      <div style="font-size:11px;color:var(--dim)">${backupInfo}</div>
+    </div>
+
+    <div class="backup-card" style="border-color:var(--red);">
+      <div style="font-size:12px;color:var(--red);font-weight:700">⚠️ 데이터 초기화</div>
+      <div style="font-size:11px;color:var(--dim)">모든 학습 데이터가 삭제됩니다.</div>
+      <button class="backup-btn" style="border-color:var(--red);color:var(--red);" onclick="confirmReset()">🗑️ 초기화</button>
+    </div>
+
+    <div style="text-align:center;font-size:10px;color:var(--dim);padding:2px 0 6px">베트남어 단어장 ${APP_VERSION}</div>
+  </div>`;
+}
+
+function renderEditor() {
+  return `<div class="card">
+    <button onclick="toggleEditor()" style="width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:none;color:var(--text);font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;padding:0;">
+      <span style="color:var(--muted)">📝 단어장 편집 <span style="color:var(--accent)">${TOTAL}</span>개</span>
+      <span style="color:var(--dim);font-size:14px">${App.editOpen ? '▾' : '▸'}</span>
+    </button>
+    ${App.editOpen ? `
+    <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;gap:6px;">
+        <button class="ed-mini acc" onclick="toggleAddNew()">＋ 단어 추가</button>
+        <button class="ed-mini" onclick="wordsExportFile()">📤 words.json</button>
+        <button class="ed-mini" onclick="wordsImportFile()">📥 가져오기</button>
+      </div>
+      ${App.addingNew ? `
+      <div style="display:flex;flex-direction:column;gap:6px;background:var(--bg-deep);border:1px solid var(--accent);border-radius:12px;padding:10px;">
+        <input id="ed-new-vi" class="ed-input" placeholder="베트남어"
+          autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+        <input id="ed-new-ko" class="ed-input" placeholder="뜻 (여러 개는 쉼표로 구분)" autocomplete="off">
+        <div style="display:flex;gap:6px;">
+          <button class="ed-mini acc" style="flex:1" onclick="wordAdd()">저장</button>
+          <button class="ed-mini" style="flex:1" onclick="toggleAddNew()">취소</button>
+        </div>
+      </div>` : ''}
+      <input class="ed-input" placeholder="🔍 검색 (베트남어/뜻)" value="${esc(App.editSearch)}"
+        autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+        oninput="editorSearch(this.value)">
+      <div id="editor-list">${editorListHTML()}</div>
+    </div>` : ''}
+  </div>`;
+}
+
+function editorListHTML() {
+  const qRaw = App.editSearch.trim().toLowerCase();
+  const qF   = fold(qRaw); // 성조 무시: 'pho'로 'phở' 검색 가능
+  let filtered;
+  if (qRaw) {
+    filtered = WORDS.filter(w => fold(w.vi).includes(qF) || w.ko.toLowerCase().includes(qRaw));
+  } else if (App.editingVi) {
+    filtered = WORDS.filter(w => w.vi === App.editingVi); // 수정 중이면 그 단어만 유지
+  } else {
+    return `<div style="font-size:12px;color:var(--dim);text-align:center;padding:14px 0">🔍 검색하면 단어가 표시돼요</div>`;
+  }
+  const shown = filtered.slice(0, 50);
+
+  return `
+    ${shown.map(w => App.editingVi === w.vi ? `
+    <div style="display:flex;flex-direction:column;gap:6px;background:var(--bg-deep);border:1px solid var(--gold);border-radius:12px;padding:10px;margin:6px 0;">
+      <input id="ed-edit-vi" class="ed-input" value="${esc(w.vi)}"
+        autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+      <input id="ed-edit-ko" class="ed-input" value="${esc(w.ko)}" autocomplete="off">
+      <div style="display:flex;gap:6px;">
+        <button class="ed-mini acc" style="flex:1" onclick="wordSave('${esc(w.vi)}')">저장</button>
+        <button class="ed-mini" style="flex:1" onclick="wordEditCancel()">취소</button>
+      </div>
+    </div>` : `
+    <div class="ed-row">
+      <div style="flex:1;min-width:0;cursor:pointer;" onclick="TTS.speak('${esc(w.vi)}')">
+        <span style="font-family:var(--serif);font-style:italic;font-size:15px;font-weight:600">${esc(w.vi)}</span>
+        <span style="font-size:11px;color:var(--muted);margin-left:8px">${esc(w.ko)}</span>
+      </div>
+      <button class="ed-ico" onclick="wordEditStart('${esc(w.vi)}')">✏️</button>
+      <button class="ed-ico" onclick="wordDelete('${esc(w.vi)}')">🗑️</button>
+    </div>`).join('')}
+    ${filtered.length > 50 ? `<div style="font-size:11px;color:var(--dim);text-align:center;padding:8px 0">+${filtered.length - 50}개 더 — 검색으로 좁혀보세요</div>` : ''}
+    ${filtered.length === 0 ? `<div style="font-size:12px;color:var(--dim);text-align:center;padding:10px 0">검색 결과 없음</div>` : ''}`;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   §8 · 학습 흐름 (플래시카드 · 퀴즈)
+═══════════════════════════════════════════════════════════════ */
+
+function flashFlip() {
+  if (Date.now() - App.swipedAt < 350) return; // 스와이프 직후의 click은 뒤집기가 아님
+  App.flipped = !App.flipped; render();
+}
+
+// 좌우 스와이프 = 다음/이전 (세로 스크롤·짧은 탭은 통과)
+function flashTouchStart(e) {
+  App.swipeX = e.touches[0].clientX;
+  App.swipeY = e.touches[0].clientY;
+}
+
+function flashTouchEnd(e) {
+  if (App.swipeX === null) return;
+  const dx = e.changedTouches[0].clientX - App.swipeX;
+  const dy = e.changedTouches[0].clientY - App.swipeY;
+  App.swipeX = null;
+  const SWIPE_MIN = 50; // 최소 이동(px) — 미만이면 탭으로 간주
+  if (Math.abs(dx) < SWIPE_MIN || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+  App.swipedAt = Date.now();
+  if (dx < 0) flashNext(); else flashPrev();
+}
+
+function flashNext() {
+  if (App.flashIdx < App.flashDeck.length - 1) {
+    App.flashIdx++;
+    App.flipped = false;
+    render();
+  } else {
+    // 덱 완료 → 새 덱 빌드
+    App.flashDeck = Store.getFlashDeck();
+    App.flashIdx = 0;
+    App.flipped = false;
+    render();
+  }
+}
+
+function flashPrev() {
+  if (App.flashIdx > 0) { App.flashIdx--; App.flipped = false; render(); }
+}
+
+function startQuiz(mode) {
+  const pool = Store.getDueWords();
+  if (!pool.length) { App.screen = 'done'; App.sesC = 0; App.sesW = 0; render(); return; }
+  // 매 시작마다 전체 랜덤, 세션당 SESSION_CAP개
+  App.mode = mode; App.queue = shuffle(pool).slice(0, SESSION_CAP); App.qIdx = 0;
+  App.streak = 0; App.sesC = 0; App.sesW = 0; App.sesWrong = [];
+  App.input = ''; App.phase = 'playing'; App.screen = 'quiz'; App.pendingRate = false;
+  render(); // updateQuiz가 클릭 핸들러 동기 흐름에서 focus (iOS 키보드 유지)
+  if (mode === 'dictation') setTimeout(() => TTS.speak(App.queue[0].vi), 300);
+}
+
+function quizSpeak() {
+  const word = App.queue[App.qIdx]; if (!word) return;
+  App.pulsing = true; render();
+  TTS.speak(word.vi);
+  setTimeout(() => { App.pulsing = false; render(); }, 700);
+}
+
+// Enter 라우팅: 입력 중엔 제출, 정답 평가 대기 중엔 Good (Anki 리듬)
+// 오답엔 미적용 — Again/✏️는 의도적 선택이어야 함
+function quizEnter() {
+  if (App.phase === 'playing') quizSubmit();
+  else if (App.phase === 'correct') quizRate(4);
+}
+
+function quizSubmit() {
+  if (App.phase !== 'playing') return;
+  if (!App.input.trim()) { if (App.mode === 'dictation') quizSpeak(); return; }
+  const word    = App.queue[App.qIdx];
+  const correct = norm(App.input) === norm(word.vi);
+  if (correct) {
+    App.phase = 'correct'; App.streak++; App.sesC++; App.pendingRate = true;
+  } else {
+    // 💡 오답 기록 전 스냅샷 촬영 (Deep Copy)
+    const today = todayKey();
+    App.snapshot = {
+      srsWord:  Store._data.srs[word.vi] ? JSON.parse(JSON.stringify(Store._data.srs[word.vi])) : null,
+      logToday: Store._data.log[today]   ? JSON.parse(JSON.stringify(Store._data.log[today]))   : null,
+      streak:   App.streak, // 🔥 연속 기록 (오답으로 0이 되기 전 값)
+      dayKey:   today,      // 📅 촬영 당시 날짜 (자정 경계 대응)
+    };
+    // 오답 기록 실행
+    Store.recordAnswer(word.vi, 0);
+    App.phase = 'wrong'; App.streak = 0; App.sesW++;
+    App.sesWrong.push(word.vi); // 세션 오답 목록 (✏️ 시 pop으로 정확히 롤백)
+    App.shaking = true;
+    setTimeout(() => { App.shaking = false; render(); }, 400);
+    if (App.mode === 'dictation') setTimeout(() => TTS.speak(word.vi), 300);
+  }
+  render();
+}
+
+function retryInput() {
+  const word = App.queue[App.qIdx];
+  if (!word || !App.snapshot) return; // 스냅샷 없으면 무시 (중복 복구 방지)
+
+  // 📅 스냅샷 촬영 시점의 날짜 키 (자정 넘긴 후 ✏️ 눌러도 어제 로그를 정확히 복구)
+  const logKey = App.snapshot.dayKey || todayKey();
+
+  // 1. srs 단어 데이터 원상복구
+  if (App.snapshot.srsWord === null) {
+    delete Store._data.srs[word.vi]; // 새 단어였으면 레코드 삭제
+  } else {
+    Store._data.srs[word.vi] = App.snapshot.srsWord; // 기존 상태로 롤백
+  }
+
+  // 2. 일일 통계 로그 원상복구
+  if (App.snapshot.logToday === null) {
+    delete Store._data.log[logKey];
+  } else {
+    Store._data.log[logKey] = App.snapshot.logToday;
+  }
+
+  // 3. localStorage 저장
+  Store.save();
+
+  // 4. 세션 상태 롤백 + 입력창 초기화
+  App.sesW       = Math.max(0, App.sesW - 1);
+  if (App.sesWrong[App.sesWrong.length - 1] === word.vi) App.sesWrong.pop(); // 오답 목록 롤백
+  App.streak     = App.snapshot.streak ?? 0; // 🔥 연속 기록 복구
+  App.phase      = 'playing';
+  // App.input 유지 — ✏️의 목적은 오타 '수정'이므로 틀린 입력을 남겨 한 글자만 고치게 함
+  App.snapshot   = null; // 스냅샷 비우기 (중복 복구 방지)
+
+  render(); // updateQuiz가 input 값 동기화 + 동기 focus
+}
+
+function quizRate(quality) {
+  // 정답 후 Hard/Good 선택 or 오답 후 Again
+  // 연타/더블탭 방어: 평가는 해당 phase에서 단 1회만 (이미 진행됐으면 무시)
+  if (quality >= 3 && App.phase !== 'correct') return;
+  if (quality < 3  && App.phase !== 'wrong')   return;
+  App.pendingRate = false;
+  App.snapshot    = null; // 이전 단어 스냅샷 잔재 정리
+  const word = App.queue[App.qIdx];
+  if (quality >= 3) {
+    Store.recordAnswer(word.vi, quality); // 오답(Again)은 quizSubmit에서 이미 기록됨
+  } else {
+    // 😓 Again: 세션 끝에 재출제 — 맞혀야 세션이 끝남 (Anki 방식)
+    // 재삽입을 종료 판정보다 먼저 하므로 마지막 문제에서 Again해도 세션이 이어짐
+    App.queue.push(word);
+  }
+  const next = App.qIdx + 1;
+  if (next >= App.queue.length) {
+    App.screen = 'done'; render();
+  } else {
+    App.qIdx = next; App.phase = 'playing'; App.input = ''; render();
+    if (App.mode === 'dictation') setTimeout(() => TTS.speak(App.queue[next].vi), 150);
+  }
+}
+
+// 데이터가 통째로 바뀌면(초기화/복원) 플래시덱을 새로 빌드하도록 비움
+function clearFlashDeck() { App.flashDeck = []; App.flashIdx = 0; App.flipped = false; }
+
+/* ═══════════════════════════════════════════════════════════════
+   §9 · 단어 관리 (편집 · 추가 · 삭제)
+═══════════════════════════════════════════════════════════════ */
+
+function toggleEditor() {
+  App.editOpen = !App.editOpen;
+  App.addingNew = false; App.editingVi = null;
+  render();
+}
+
+// 검색: 목록만 부분 갱신 (전체 렌더 시 키보드 닫힘 방지)
+function editorSearch(v) {
+  App.editSearch = v;
+  const el = byId('editor-list');
+  if (el) el.innerHTML = editorListHTML();
+}
+
+function toggleAddNew() {
+  App.addingNew = !App.addingNew;
+  App.editingVi = null;
+  render();
+  if (App.addingNew) setTimeout(() => { const i = byId('ed-new-vi'); if (i) i.focus(); }, 100);
+}
+
+function wordAdd() {
+  const viEl = byId('ed-new-vi');
+  const koEl = byId('ed-new-ko');
+  const vi = (viEl?.value || '').trim();
+  const ko = (koEl?.value || '').trim();
+  if (!validVi(vi)) return;
+  if (!ko) { alert('뜻을 입력해주세요.'); return; }
+  if (WORDS.some(w => norm(w.vi) === norm(vi))) { alert('이미 있는 단어예요: ' + vi); return; }
+  WORDS = Object.freeze([...WORDS, { vi, ko }]);
+  saveWords();
+  clearFlashDeck();
+  App.addingNew = false;
+  render();
+}
+
+function wordEditStart(vi)  { App.editingVi = vi; App.addingNew = false; render(); }
+
+function wordEditCancel()   { App.editingVi = null; render(); }
+
+function wordSave(oldVi) {
+  const vi = (byId('ed-edit-vi')?.value || '').trim();
+  const ko = (byId('ed-edit-ko')?.value || '').trim();
+  if (!validVi(vi)) return;
+  if (!ko) { alert('뜻을 입력해주세요.'); return; }
+  if (vi !== oldVi && WORDS.some(w => w.vi !== oldVi && norm(w.vi) === norm(vi))) { alert('이미 있는 단어예요: ' + vi); return; }
+  WORDS = Object.freeze(WORDS.map(w => w.vi === oldVi ? { vi, ko } : w));
+  saveWords();
+  // 철자 변경 시 SRS 학습 기록도 새 철자로 이전 (기록 고아 방지)
+  if (vi !== oldVi && Store._data.srs[oldVi]) {
+    Store._data.srs[vi] = Store._data.srs[oldVi];
+    delete Store._data.srs[oldVi];
+    Store.save();
+  }
+  clearFlashDeck();
+  App.editingVi = null;
+  render();
+}
+
+function wordDelete(vi) {
+  if (!confirm(`'${vi}' 단어를 삭제할까요?\n학습 기록도 함께 삭제됩니다.`)) return;
+  WORDS = Object.freeze(WORDS.filter(w => w.vi !== vi));
+  saveWords();
+  if (Store._data.srs[vi]) { delete Store._data.srs[vi]; Store.save(); }
+  clearFlashDeck();
+  render();
+}
+
+// 단어장에 없는 학습 기록(orphan) 정리 — 단어 삭제 후 복원 등으로 생긴 잔재 제거
+function pruneOrphanSrs() {
+  if (!WORDS.length) return 0; // 단어장이 비정상(미로드)일 때 전체 삭제 사고 방지
+  const viSet = new Set(WORDS.map(w => w.vi));
+  let n = 0;
+  Object.keys(Store._data.srs).forEach(vi => {
+    if (!viSet.has(vi)) { delete Store._data.srs[vi]; n++; }
+  });
+  if (n) Store.save();
+  return n;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   §10 · 백업 / 복원
+═══════════════════════════════════════════════════════════════ */
+
+function markBackedUp() {
+  try { localStorage.setItem(BACKUP_TS_KEY, String(Date.now())); } catch (e) {}
+}
+
+// 파일 내보내기: 공유시트 우선(PWA 독립실행에서도 안정) → 다운로드 폴백
+// 반환: true=내보내기 시도 완료 / false=사용자가 공유시트를 취소함
+async function exportFile(filename, text) {
+  const file = new File([text], filename, { type: 'application/json' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file] });
+      return true;
+    } catch (e) {
+      if (e.name === 'AbortError') return false; // 사용자가 닫음 → 저장 안 됨
+      // 그 외 오류는 다운로드 폴백으로 진행
+    }
+  }
+  const blob = new Blob([text], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+  return true;
+}
+
+async function doExportFile() {
+  const json = JSON.stringify({ version: 2, words: WORDS, srs: Store.srs, log: Store.log });
+  if (await exportFile(`viet-backup-${todayKey()}.json`, json)) {
+    markBackedUp(); // 취소 시엔 기록하지 않음 (리마인더가 계속 보이는 게 정확)
+    render();
+  }
+}
+
+function doImportFile() {
+  const input = document.createElement('input');
+  input.type   = 'file';
+  input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const raw = ev.target.result.trim();
+        const p   = JSON.parse(raw);
+        if (Array.isArray(p)) { alert('이 파일은 단어장(words.json)이에요.\n통계탭 → 단어장 편집 → 📥 가져오기를 사용하세요.'); return; }
+        // v2 통합 백업: 단어장 포함
+        if (p.words) {
+          if (!Array.isArray(p.words) || !p.words.length
+            || !p.words.every(w => w && typeof w.vi === 'string' && typeof w.ko === 'string' && w.vi && w.ko)) throw new Error('words shape');
+          const badVi = p.words.find(w => /['"`\\<>]/.test(w.vi));
+          if (badVi) { alert(`❌ 사용할 수 없는 문자가 포함된 단어가 있어요:\n${badVi.vi.slice(0, 40)}`); return; }
+          if (!confirm(`전체 데이터를 이 백업으로 교체할까요?\n단어 ${p.words.length}개 + 학습기록 ${Object.keys(p.srs || {}).length}개`)) return;
+          WORDS = Object.freeze(p.words);
+          saveWords();
+        }
+        Store.import(raw);      // srs/log 검증 + 적용 (v1 파일도 이 경로로 호환)
+        pruneOrphanSrs();       // 단어장에 없는 기록 정리
+        clearFlashDeck();
+        markBackedUp();         // 외부에 백업 파일이 존재함이 확인됨
+        alert('✅ 복원 완료! 단어 ' + TOTAL + '개 / 학습기록 ' + Object.keys(Store.srs).length + '개');
+        goHome();
+      } catch (err) { alert('❌ 백업 파일 형식 오류'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// words.json 형식으로 내보내기 (GitHub 덮어쓰기용 — 한 단어당 한 줄)
+function wordsExportFile() {
+  const json = '[\n' + WORDS.map(w => '  ' + JSON.stringify(w)).join(',\n') + '\n]';
+  exportFile('words.json', json); // 단어장 내보내기는 백업 시각에 미기록 (전체 백업 아님)
+}
+
+// words.json 파일 가져오기 (기기 간 동기화용 — 단어장 전체 교체)
+function wordsImportFile() {
+  const input = document.createElement('input');
+  input.type   = 'file';
+  input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result.trim());
+        if (!Array.isArray(data) || !data.length) throw new Error('empty');
+        if (!data.every(w => w && typeof w.vi === 'string' && typeof w.ko === 'string' && w.vi && w.ko)) throw new Error('shape');
+        const badVi = data.find(w => /['"`\\<>]/.test(w.vi));
+        if (badVi) { alert(`❌ 사용할 수 없는 문자가 포함된 단어가 있어요:\n${badVi.vi.slice(0, 40)}`); return; }
+        if (!confirm(`단어장을 ${data.length}개 단어로 교체할까요?\n(학습 기록은 유지됩니다)`)) return;
+        WORDS = Object.freeze(data);
+        saveWords();
+        const pruned = pruneOrphanSrs(); // 사라진 단어의 학습 기록 정리
+        clearFlashDeck();
+        alert('✅ 단어장 교체 완료! ' + data.length + '개' + (pruned ? `\n(사라진 단어 학습기록 ${pruned}개 정리)` : ''));
+        render();
+      } catch (err) { alert('❌ words.json 형식 오류'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function confirmReset() {
+  if (confirm('학습 데이터를 초기화할까요?')) { Store.reset(); clearFlashDeck(); render(); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   §11 · ⚡ 스피드런 게임모드 (읽기전용 · 별도 최고기록)
+═══════════════════════════════════════════════════════════════ */
+
+const SR_KEY = 'viet-speedrun-hi';
+
+const SR_HEARTS = 3, SR_BASE_TIME = 6.0, SR_MIN_TIME = 3.0, SR_RAMP_Q = 25;
+
+const SR_POINTS = 10, SR_MULT_CAP = 4, SR_WRONG_W = 3, SR_REVEAL_OK = 550, SR_REVEAL_BAD = 1100;
+
+const SR = { sub:'start', hearts:0, score:0, combo:0, maxCombo:0, qCount:0,
+  cur:null, locked:false, timer:null, best:{best:0,combo:0}, seen:null, paused:false, phase:null, wrongList:null, quickStart:false, animEl:null, animHandler:null };
+
+const srShuffle = a => { const r=[...a]; for(let i=r.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[r[i],r[j]]=[r[j],r[i]];} return r; };
+
+const srWrong = vi => { const d = Store.srs[vi]; return (d && d.wrongCount>0) ? d.wrongCount : 0; };
+
+const srDiffT = () => Math.min(1, SR.qCount / SR_RAMP_Q);
+
+const srMult  = () => Math.min(SR_MULT_CAP, 1 + Math.floor(SR.combo/5)*0.5);
+
+const srTime  = () => SR_BASE_TIME - (SR_BASE_TIME - SR_MIN_TIME) * srDiffT();
+
+function srLoadBest(){ try{ const r=localStorage.getItem(SR_KEY); if(r){ const b=JSON.parse(r); return {best:b.best|0, combo:b.combo|0}; } }catch(e){} return {best:0,combo:0}; }
+
+function srSaveBest(){ try{ localStorage.setItem(SR_KEY, JSON.stringify({best:SR.best.best, combo:SR.best.combo})); }catch(e){} }
+
+function srPickWord(){
+  const t = srDiffT();
+  let pool = WORDS.filter(w => !SR.seen.has(w.vi));      // 한 판에서 본 단어 제외 → 중복 없음
+  if (pool.length < 4) { SR.seen.clear(); pool = WORDS.slice(); }  // 전부 소진 시에만 리셋
+  let total=0; const weights=pool.map(w=>{ const wt=1 + srWrong(w.vi)*SR_WRONG_W*t; total+=wt; return wt; });
+  let r=Math.random()*total, idx=0;
+  for(;idx<pool.length;idx++){ r-=weights[idx]; if(r<=0)break; }
+  const word = pool[Math.min(idx,pool.length-1)];
+  SR.seen.add(word.vi);
+  return word;
+}
+
+function srMakeOptions(word){
+  const t = srDiffT();
+  const others = WORDS.filter(w => w.vi!==word.vi && w.ko!==word.ko);
+  const score = w => { let s=0; if(fold(w.vi)[0]===fold(word.vi)[0]) s+=2;
+    if(Math.abs(w.vi.length-word.vi.length)<=1) s+=1;
+    const fa=fold(w.vi), fb=fold(word.vi); let sh=0; for(const c of new Set(fa)) if(fb.includes(c)) sh++; return s+sh*0.3; };
+  let pool = (Math.random()<t && others.length>12) ? [...others].sort((a,b)=>score(b)-score(a)).slice(0,14) : others;
+  const distractors = srShuffle(pool).slice(0,3);
+  let guard=0;
+  while(distractors.length<3 && guard++<60){ const c=WORDS[Math.random()*WORDS.length|0];
+    if(c.vi!==word.vi && c.ko!==word.ko && !distractors.some(d=>d.vi===c.vi)) distractors.push(c); }
+  return { options: srShuffle([word, ...distractors]), correctVi: word.vi };
+}
+
+function srOpen(){
+  if (!WORDS || WORDS.length < 4){ alert('단어가 부족해 게임을 시작할 수 없어요.'); return; }
+  SR.best = srLoadBest(); SR.sub='start'; App.screen='speedrun';
+  srRenderStart();
+}
+
+function srStart(quick){
+  SR.hearts=SR_HEARTS; SR.score=0; SR.combo=0; SR.maxCombo=0; SR.qCount=0;
+  SR.locked=false; SR.paused=false; SR.wrongList=[]; SR.quickStart=!!quick;
+  SR.seen=new Set(); SR.sub='play'; App.screen='speedrun';
+  srNextQuestion(true);
+}
+
+function srExit(force){
+  if (!force && SR.sub==='play' && (SR.score>0 || SR.qCount>1)) {
+    if (!confirm('게임을 그만둘까요?\n현재 점수는 기록되지 않아요.')) return;
+  }
+  SR.paused=false; srClearTimer(); TTS.cancel(); App.screen='home'; App.tab=0; render();
+}
+
+function srNextQuestion(withCount){
+  srClearTimer(); SR.locked=false;
+  const word = srPickWord();
+  SR.cur = { word, ...srMakeOptions(word) };
+  SR.qCount++;
+  srRenderPlay();
+  if (withCount) srCountdown(); else srStartTimer();
+}
+
+function srStartTimer(){
+  SR.phase = 'play';
+  if (SR.animEl && SR.animHandler) { SR.animEl.removeEventListener('animationend', SR.animHandler); SR.animEl = null; SR.animHandler = null; } // 자기정리
+  const lim = srTime(); const fill = byId('sr-fill');
+  if(fill){
+    fill.style.animation='none'; void fill.offsetWidth;
+    fill.style.animation = 'sr-drain ' + lim + 's linear forwards';
+    SR.animEl = fill;
+    SR.animHandler = e => { if(e.animationName==='sr-drain') srAnswer(null); };  // 바와 동일 시계
+    fill.addEventListener('animationend', SR.animHandler);
+  }
+  SR.timer = setTimeout(() => srAnswer(null), lim*1000 + 250);  // 안전망: 애니메이션 누락 시에도 종료 보장
+}
+
+function srClearTimer(){
+  if(SR.timer){ clearTimeout(SR.timer); SR.timer=null; }
+  if(SR.animEl && SR.animHandler){ SR.animEl.removeEventListener('animationend', SR.animHandler); }
+  SR.animEl=null; SR.animHandler=null;
+}
+
+function srAnswer(vi){
+  if(SR.locked) return;
+  SR.locked=true; srClearTimer();
+  const fill=byId('sr-fill'); if(fill) fill.style.animationPlayState='paused';
+  const correct = vi!==null && vi===SR.cur.correctVi;
+  document.querySelectorAll('.sr-opt').forEach(btn=>{
+    const b=btn.dataset.vi;
+    if(b===SR.cur.correctVi) btn.classList.add('correct');
+    else if(b===vi) btn.classList.add('wrong');
+    else btn.classList.add('dim');
+  });
+  if(correct){
+    SR.combo++; SR.maxCombo=Math.max(SR.maxCombo, SR.combo);
+    const pts = Math.round(SR_POINTS*srMult());
+    SR.score += pts;
+    const sc=byId('sr-score'); if(sc){ sc.textContent=SR.score; sc.classList.add('pop'); setTimeout(()=>sc.classList.remove('pop'),130); }
+    srShowPlus(pts);
+    srUpdateCombo();
+  } else {
+    SR.combo=0; SR.hearts--;
+    SR.wrongList.push({ ko: SR.cur.word.ko, vi: SR.cur.correctVi });   // 읽기전용 집계(SRS 무관)
+    const hud=byId('sr-hud'); if(hud) hud.classList.add('sr-shake');
+    srRenderHearts(); srUpdateCombo();
+  }
+  SR.phase = 'reveal';
+  SR.timer = setTimeout(()=>{ if(SR.hearts<=0) srGameOver(); else srNextQuestion(false); }, correct ? SR_REVEAL_OK : SR_REVEAL_BAD);
+}
+
+function srGameOver(){
+  srClearTimer(); SR.paused=false; SR.sub='over';
+  const prev = SR.best.best, isNew = SR.score>prev;
+  if(SR.score>SR.best.best) SR.best.best=SR.score;
+  if(SR.maxCombo>SR.best.combo) SR.best.combo=SR.maxCombo;
+  srSaveBest();
+  srRenderOver(isNew, prev);
+}
+
+function srRender(){
+  if(SR.sub==='play' && SR.cur){ srRenderPlay(); if(SR.paused) srShowPause(); }
+  else if(SR.sub==='over') srRenderOver(false, SR.best.best);
+  else { SR.best=srLoadBest(); srRenderStart(); }
+}
+
+function srRenderStart(){
+  byId('root').innerHTML =
+    '<div class="sr-wrap">' +
+      '<div class="sr-top"><button class="sr-back" onclick="srExit()">\u2039 \uD648</button></div>' +
+      '<div class="sr-center sr-fade">' +
+        '<div class="sr-title"><span class="b">\u26A1</span> \uC2A4\uD53C\uB4DC\uB7F0</div>' +
+        '<div class="sr-best">\uD83C\uDFC6 \uCD5C\uACE0 <b>' + SR.best.best + '</b>\uC810 \u00B7 \uCD5C\uB300\uCF64\uBCF4 ' + SR.best.combo + '</div>' +
+        '<div class="sr-sub">한국어 뜻에 맞는 베트남어를 빠르게 탭하세요!<br>❤️ 하트 ' + SR_HEARTS + '개, 틀리거나 시간이 지나면 하트가 줄어듭니다.<br>🔥 콤보를 이어갈수록 점수 배수가 올라가고 난이도도 점점 상승합니다.</div>' +
+        '<button class="sr-btn" onclick="srStart()">\uC2DC\uC791</button>' +
+      '</div>' +
+    '</div>';
+}
+
+function srHeartsHTML(){ let h=''; for(let i=0;i<SR_HEARTS;i++) h+='<span class="'+(i<SR.hearts?'':'sr-lost')+'">\u2764\uFE0F</span>'; return h; }
+
+function srComboHTML(){ return '\uD83D\uDD25 ' + SR.combo + ' \uCF64\uBCF4 <span class="m">\u00D7' + srMult().toFixed(1) + '</span>'; }
+
+function srRenderHearts(){ const el=byId('sr-hearts'); if(el) el.innerHTML=srHeartsHTML(); }
+
+function srUpdateCombo(){ const el=byId('sr-combo'); if(!el) return;
+  if(SR.combo>=2){ el.innerHTML=srComboHTML(); el.classList.add('show'); } else el.classList.remove('show'); }
+
+function srRenderPlay(){
+  const opts = SR.cur.options.map(w => '<button class="sr-opt" data-vi="'+esc(w.vi)+'" onclick="srAnswer(\''+w.vi+'\')">'+esc(w.vi)+'</button>').join('');
+  byId('root').innerHTML =
+    '<div class="sr-wrap">' +
+      '<div class="sr-hud" id="sr-hud">' +
+        '<div class="sr-hearts" id="sr-hearts">' + srHeartsHTML() + '</div>' +
+        '<div class="sr-hud-r"><div class="sr-hud-best">\uD83C\uDFC6 ' + SR.best.best + '</div><button class="sr-x" onclick="srExit()">\u2715</button></div>' +
+      '</div>' +
+      '<div class="sr-scorebar" id="sr-scorebar">' +
+        '<div class="sr-score" id="sr-score">' + SR.score + '</div>' +
+        '<div class="sr-combo ' + (SR.combo>=2?'show':'') + '" id="sr-combo">' + (SR.combo>=2?srComboHTML():'') + '</div>' +
+      '</div>' +
+      '<div class="sr-track"><div class="sr-fill" id="sr-fill"></div></div>' +
+      '<div class="sr-pzone">' +
+        '<div class="sr-plabel">\uC774 \uB73B\uC758 \uBCA0\uD2B8\uB0A8\uC5B4\uB294?</div>' +
+        '<div class="sr-prompt">' + esc(SR.cur.word.ko) + '</div>' +
+      '</div>' +
+      '<div class="sr-opts">' + opts + '</div>' +
+      '<div class="sr-overlay" id="sr-overlay" style="display:none"></div>' +
+    '</div>';
+}
+
+function srRenderOver(isNew, prev){
+  byId('root').innerHTML =
+    '<div class="sr-wrap"><div class="sr-center sr-fade">' +
+      (isNew ? '<div class="sr-newbest">\uD83C\uDF89 NEW BEST!</div>' : '') +
+      '<div style="font-family:var(--serif);font-weight:600;font-size:22px;color:var(--muted)">\uB05D!</div>' +
+      '<div class="sr-final">' + SR.score + '</div>' +
+      '<div class="sr-stats">' +
+        '<div class="sr-stat"><div class="v">' + SR.maxCombo + '</div><div class="l">\uCD5C\uB300 \uCF64\uBCF4</div></div>' +
+        '<div class="sr-stat"><div class="v" style="color:var(--gold)">' + SR.best.best + '</div><div class="l">\uC5ED\uB300 \uCD5C\uACE0</div></div>' +
+      '</div>' +
+      (!isNew && prev>0 ? '<div class="sr-sub">\uCD5C\uACE0\uAE30\uB85D\uAE4C\uC9C0 ' + (prev-SR.score) + '\uC810!</div>' : '') +
+      '<div style="display:flex;gap:12px;margin-top:4px">' +
+        '<button class="sr-btn" onclick="srStart(true)">\uD55C \uBC88 \uB354</button>' +
+        '<button class="sr-ghost" onclick="srExit()">\uADF8\uB9CC</button>' +
+      '</div>' +
+      (SR.wrongList && SR.wrongList.length ?
+        '<div class="sr-missed"><div class="sr-missed-t">이번에 놓친 단어</div>' +
+        SR.wrongList.map(m => '<div class="sr-missed-row"><span class="k">'+esc(m.ko)+'</span><span class="v">'+esc(m.vi)+'</span></div>').join('') +
+        '</div>' : '') +
+    '</div></div>';
+}
+
+function srShowPlus(pts){
+  const bar = byId('sr-scorebar'), sc = byId('sr-score'); if(!bar || !sc) return;
+  const el = document.createElement('div'); el.className='sr-plus'; el.textContent='+'+pts;
+  el.style.left = (sc.offsetLeft + sc.offsetWidth + 8) + 'px';   // 점수 숫자 오른쪽 끝
+  el.style.top  = (sc.offsetTop + 2) + 'px';
+  bar.appendChild(el);
+  setTimeout(()=>{ if(el && el.parentNode) el.parentNode.removeChild(el); }, 720);
+}
+
+function srCountdown(){
+  SR.phase='count';
+  const ov=byId('sr-overlay'); if(!ov){ srStartTimer(); return; }
+  ov.style.display='flex'; ov.onclick=srSkipCountdown;
+  const seq = SR.quickStart ? ['시작'] : [3,2,1,'시작'];   // 재시작은 짧게
+  let i=0;
+  const paint=t=>{ ov.innerHTML='<div class="sr-cd"><div class="sr-count">'+t+'</div><div class="sr-skip">탭하여 건너뛰기</div></div>'; };
+  const step=()=>{
+    if(i>=seq.length){ ov.onclick=null; ov.style.display='none'; ov.innerHTML=''; srStartTimer(); return; }
+    paint(seq[i]);
+    const dur = seq[i]==='시작' ? 450 : 700;
+    i++; SR.timer=setTimeout(step, dur);
+  };
+  step();
+}
+
+function srSkipCountdown(){
+  if(SR.phase!=='count' || SR.paused) return;
+  srClearTimer();
+  const ov=byId('sr-overlay'); if(ov){ ov.onclick=null; ov.style.display='none'; ov.innerHTML=''; }
+  srStartTimer();
+}
+
+function srShowPause(){
+  const ov=byId('sr-overlay'); if(!ov) return;
+  ov.style.display='flex'; ov.onclick=null;
+  ov.innerHTML='<div class="sr-ov-box"><div class="sr-ov-title">\uC77C\uC2DC\uC815\uC9C0</div>'
+    +'<button class="sr-btn" onclick="srResume()">\uC774\uC5B4\uD558\uAE30</button>'
+    +'<button class="sr-ghost" onclick="srExit(true)">\uADF8\uB9CC\uB450\uAE30</button></div>';
+}
+
+function srResume(){
+  if(!SR.paused) return;
+  SR.paused=false;
+  const ov=byId('sr-overlay'); if(ov){ ov.style.display='none'; ov.innerHTML=''; }
+  if(SR.phase==='count') srCountdown();
+  else if(SR.phase==='reveal'){ if(SR.hearts<=0) srGameOver(); else srNextQuestion(false); }
+  else srStartTimer();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   §12 · 부팅 & 시스템 등록
+═══════════════════════════════════════════════════════════════ */
+
+document.addEventListener('visibilitychange', function(){
+  if(App.screen!=='speedrun' || SR.sub!=='play') return;
+  if(document.hidden){
+    if(SR.paused) return;
+    SR.paused=true; srClearTimer();
+    const f=byId('sr-fill'); if(f) f.style.animationPlayState='paused';
+  } else if(SR.paused){
+    srShowPause();
+  }
+});
+
+// ── Service Worker 등록 (오프라인 지원) ──
+// load 이후 비차단 등록. updateViaCache:'none'로 sw.js를 항상 최신 검사(버전 반영 보장).
+// SW 미지원/비보안컨텍스트(file://·http)면 조용히 무시 → 앱 동작에 영향 없음.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
+  });
+}
+
+(async () => {
+  try {
+    await loadWords();
+    Store.load();
+    if (!App.loadError) pruneOrphanSrs(); // 부팅 자가점검: 어떤 경로로든 생긴 고아 기록 치유
+    TTS.init();
+    render();
+  } catch (e) {
+    console.error('BOOT failed:', e);
+    const root = byId('root');
+    if (root) root.innerHTML = `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;text-align:center;">
+      <div style="font-size:48px">⚠️</div>
+      <div style="font-size:16px;color:#e0635c;font-weight:700">앱 시작 오류</div>
+      <button onclick="location.reload()" style="padding:12px 24px;border-radius:14px;border:none;background:#d97757;color:#1f1e1d;font-size:15px;font-weight:700;cursor:pointer;">🔄 새로고침</button>
+    </div>`;
+  }
+})();
+
+</script>
+</body>
+</html>
